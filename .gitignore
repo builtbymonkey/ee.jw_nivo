@@ -1,0 +1,5 @@
+/__art/
+/release/
+/build
+*.zip
+.DS_Store
