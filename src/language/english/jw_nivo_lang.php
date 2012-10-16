@@ -3,8 +3,7 @@
 $lang = array(
 
 'theme' => 'Theme',
-'preference' => 'Preference',
-'setting' => 'Setting',
+'nivo_preferences' => 'Nivo Preferences',
 
 
 // END

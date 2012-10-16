@@ -115,32 +115,13 @@ class Jw_nivo_ft extends EE_Fieldtype {
     /**
      * Display Global Settings
      *
-     * @return string The form displayed on the settings page
+     * @return string The form displayed on the global settings page
      */
     public function display_global_settings()
     {
         $val = array_merge($this->settings, $_POST);
 
-        // load the language file
-        $this->EE->lang->loadfile('jw_nivo');
-
-        // load the table lib
-        $this->EE->load->library('table');
-
-        // use the default template known as
-        // $cp_pad_table_template in the views
-        $this->EE->table->set_template(array(
-            'table_open'    => '<table class="mainTable padTable" border="0" cellspacing="0" cellpadding="0">',
-            'row_start'     => '<tr class="even">',
-            'row_alt_start' => '<tr class="odd">'
-        ));
-
-        $this->EE->table->set_heading(array(lang('preference'), lang('setting')));
-
-        $this->EE->table->add_row(
-            lang('theme'),
-            form_dropdown('theme', $this->get_theme_options(), $val['theme'])
-        );
+        $this->prep_prefs_table($val);
 
         return $this->EE->table->generate();
     }
@@ -155,6 +136,35 @@ class Jw_nivo_ft extends EE_Fieldtype {
     {
         return array(
             'theme' => isset($_POST['theme']) ? $_POST['theme'] : $this->_default_theme
+        );
+    }
+
+
+// ----------------------------------------------------------------------------- INDIVIDUAL SETTINGS
+
+
+    /**
+     * Display Settings
+     *
+     * @return string The form displayed on the settings page
+     */
+    public function display_settings($data)
+    {
+        $this->prep_prefs_table($data);
+
+        return $this->EE->table->generate();
+    }
+
+
+    /**
+     * Save Settings
+     *
+     * @return array The settings values
+     */
+    function save_settings()
+    {
+        return array(
+            'theme' => $this->EE->input->post('theme')
         );
     }
 
@@ -207,6 +217,35 @@ class Jw_nivo_ft extends EE_Fieldtype {
         }
 
         return $options;
+    }
+
+
+    /**
+     * Prepare Preferences Table
+     *
+     * @param array Current values for settings
+     */
+    private function prep_prefs_table($current)
+    {
+        // load the language file
+        $this->EE->lang->loadfile('jw_nivo');
+
+        // load the table lib
+        $this->EE->load->library('table');
+
+        // use the default template known as $cp_pad_table_template in the views
+        $this->EE->table->set_template(array(
+            'table_open'      => '<table class="mainTable padTable" border="0" cellspacing="0" cellpadding="0">',
+            'row_start'       => '<tr class="even">',
+            'row_alt_start'   => '<tr class="odd">'
+        ));
+
+        $this->EE->table->set_heading(array('data' => lang('nivo_preferences'), 'style' => 'width: 40%'), '');
+
+        $this->EE->table->add_row(
+            lang('theme'),
+            form_dropdown('theme', $this->get_theme_options(), $current['theme'])
+        );
     }
 
 }
