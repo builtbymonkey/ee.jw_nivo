@@ -23,9 +23,35 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
 
     /**
+     * Cache installed slider themes
+     *
+     * @var null|array
+     */
+    private $_themes = null;
+    private $_default_theme = 'default';
+
+
+// ----------------------------------------------------------------------------- CONSTRUCTOR
+
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->_slider_path = PATH_THEMES.'third_party/jw_nivo/nivo-slider/';
+    }
+
+
+// ----------------------------------------------------------------------------- FIELDTYPE METHODS
+
+
+    /**
      * Replace Tag
      *
-     * This method replaces the field tag on the front-end.
+     * This method replaces the field tag on the front-end
      *
      * @param  array  The field data (or prepped data, if using pre_process)
      * @param  array  The field parameters (if any)
@@ -34,7 +60,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function replace_tag($data, $params=array(), $tagdata=FALSE)
     {
-        // code...
+        // code..
     }
 
 
@@ -67,39 +93,121 @@ class Jw_nivo_ft extends EE_Fieldtype {
     }
 
 
-    // -------------------------------------------------------------------------
+// ----------------------------------------------------------------------------- INSTALLATION
 
 
     /**
      * Install
      *
-     * Create any db tables
+     * @return array The global settings values
      */
     public function install()
     {
-        // code...
+        return array(
+            'theme' => $this->_default_theme
+        );
+    }
+
+
+// ----------------------------------------------------------------------------- GLOBAL SETTINGS
+
+
+    /**
+     * Display Global Settings
+     *
+     * @return string The form displayed on the settings page
+     */
+    public function display_global_settings()
+    {
+        $val = array_merge($this->settings, $_POST);
+
+        // load the language file
+        $this->EE->lang->loadfile('jw_nivo');
+
+        // load the table lib
+        $this->EE->load->library('table');
+
+        // use the default template known as
+        // $cp_pad_table_template in the views
+        $this->EE->table->set_template(array(
+            'table_open'    => '<table class="mainTable padTable" border="0" cellspacing="0" cellpadding="0">',
+            'row_start'     => '<tr class="even">',
+            'row_alt_start' => '<tr class="odd">'
+        ));
+
+        $this->EE->table->set_heading(array(lang('preference'), lang('setting')));
+
+        $this->EE->table->add_row(
+            lang('theme'),
+            form_dropdown('theme', $this->get_theme_options(), $val['theme'])
+        );
+
+        return $this->EE->table->generate();
     }
 
 
     /**
-     * Uninstall
+     * Save Global Settings
      *
-     * Remove any db tables
+     * @return array The global settings values
      */
-    public function uninstall()
+    function save_global_settings()
     {
-        // code...
+        return array(
+            'theme' => isset($_POST['theme']) ? $_POST['theme'] : $this->_default_theme
+        );
+    }
+
+
+// ----------------------------------------------------------------------------- PRIVATE METHODS
+
+
+    /**
+     * Get Installed Themes
+     *
+     * Finds installed themes for the Nivo Image Slider
+     *
+     * @return array The folder names for the installed themes
+     */
+    private function get_installed_themes()
+    {
+        if ($this->_themes !== null) {
+            return $this->_themes;
+        }
+
+        $themes_path     = $this->_slider_path.'themes';
+        $contents        = array_diff(scandir($themes_path), array('..', '.')); // Strip self and parent
+        $this->_themes   = array();
+
+        foreach ($contents as $f) {
+            if (is_dir($themes_path.'/'.$f)) {
+                $this->_themes[] = $f;
+            }
+        }
+        $this->_themes[] = '_none';
+
+        return $this->_themes;
     }
 
 
     /**
-     * Update
+     * Get Theme Options
      *
-     * Update any db tables
+     * Gets the themes in an array for use in a dropdown input
+     *
+     * @return array The theme options
      */
-    public function update()
+    private function get_theme_options()
     {
-        // code...
+        $themes    = $this->get_installed_themes();
+        $options   = array();
+
+        foreach ($themes as $theme) {
+            $options[$theme] = ucwords(trim(preg_replace('/[._ ]+/', ' ', $theme)));
+        }
+
+        return $options;
     }
+
 }
 // END CLASS
