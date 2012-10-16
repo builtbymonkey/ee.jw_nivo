@@ -42,10 +42,12 @@ class Jw_nivo_ft extends EE_Fieldtype {
         parent::__construct();
 
         $this->_slider_path = PATH_THEMES.'third_party/jw_nivo/nivo-slider/';
+
+        $this->EE->lang->loadfile('jw_nivo');
     }
 
 
-// ----------------------------------------------------------------------------- FIELDTYPE METHODS
+// ----------------------------------------------------------------------------- TEMPLATE TAGS
 
 
     /**
@@ -64,6 +66,9 @@ class Jw_nivo_ft extends EE_Fieldtype {
     }
 
 
+// ----------------------------------------------------------------------------- PUBLISH PAGE
+
+
     /**
      * Display Field
      *
@@ -74,7 +79,56 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function display_field($field_data)
     {
-        // code...
+        /**
+         * - Image matrix
+         *   - Image
+         *   - Caption
+         *   - Link
+         *   - Alt text
+         * - Theme
+         * - Transition
+         *   - Slices (for Slice transition)
+         *   - Rows + Cols (for Box transition)
+         * - Sizing
+         *   - size if fixed
+         * - Animation speed
+         * - Pause Time
+         * - Enable Thumbnail Navigation
+         * - Enable Direction Navigation (arrows)
+         * - Enable Control Navigation (1,2,3...)
+         * - Pause on Hover
+         * - Manual transition (no auto change)
+         * - Random slide start
+         */
+
+        // Load the table and file_field libs
+        $this->EE->load->library('table');
+        $this->EE->load->library('file_field');
+
+        // Setup file_field
+        $this->EE->file_field->browser(array(
+            'publish' => true,
+            'settings' => '{"content_type": "all/image", "directory": "all/<directory_id>"}',
+        ));
+
+        // Instantiate vars
+        $vars = array();
+
+        $vars['slides'] = array();
+        $vars['slides'][] = array(
+            'image'    => 'http://placekitten.com/300/300',
+            'caption'  => 'a gorgeous little kitten!',
+            'link'     => 'http://jeremyworboys.com',
+            'alt_text' => 'A Cat'
+        );
+        $vars['slides'][] = array(
+            'image'    => 'http://placekitten.com/300/300',
+            'caption'  => 'a gorgeous little kitten!',
+            'link'     => 'http://jeremyworboys.com',
+            'alt_text' => 'A Cat'
+        );
+
+        return $this->EE->load->view('field', $vars, true);
     }
 
 
@@ -143,30 +197,30 @@ class Jw_nivo_ft extends EE_Fieldtype {
 // ----------------------------------------------------------------------------- INDIVIDUAL SETTINGS
 
 
-    /**
-     * Display Settings
-     *
-     * @return string The form displayed on the settings page
-     */
-    public function display_settings($data)
-    {
-        $this->prep_prefs_table($data);
+    // /**
+    //  * Display Settings
+    //  *
+    //  * @return string The form displayed on the settings page
+    //  */
+    // public function display_settings($data)
+    // {
+    //     $this->prep_prefs_table($data);
 
-        return $this->EE->table->generate();
-    }
+    //     return $this->EE->table->generate();
+    // }
 
 
-    /**
-     * Save Settings
-     *
-     * @return array The settings values
-     */
-    function save_settings()
-    {
-        return array(
-            'theme' => $this->EE->input->post('theme')
-        );
-    }
+    // /**
+    //  * Save Settings
+    //  *
+    //  * @return array The settings values
+    //  */
+    // function save_settings()
+    // {
+    //     return array(
+    //         'theme' => $this->EE->input->post('theme')
+    //     );
+    // }
 
 
 // ----------------------------------------------------------------------------- PRIVATE METHODS
@@ -227,10 +281,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     private function prep_prefs_table($current)
     {
-        // load the language file
-        $this->EE->lang->loadfile('jw_nivo');
-
-        // load the table lib
+        // Load the table lib
         $this->EE->load->library('table');
 
         // use the default template known as $cp_pad_table_template in the views

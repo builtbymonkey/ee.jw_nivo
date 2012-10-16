@@ -2,8 +2,13 @@
 
 $lang = array(
 
-'theme' => 'Theme',
+'theme'            => 'Theme',
 'nivo_preferences' => 'Nivo Preferences',
+'image'            => 'Image',
+'caption'          => 'Image Caption',
+'link'             => 'Link',
+'alt_text'         => 'Alt Text',
+'no_slides'        => 'You haven\'t created any slides yet!',
 
 
 // END
