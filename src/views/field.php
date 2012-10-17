@@ -1,7 +1,11 @@
 
 <?php
     // Prep table
-    $this->table->set_template($cp_pad_table_template);
+    $this->table->set_template(array(
+        'table_open'      => '<table class="mainTable padTable js-nivo-table" border="0" cellspacing="0" cellpadding="0">',
+        'row_start'       => '<tr class="even">',
+        'row_alt_start'   => '<tr class="odd">'
+    ));
 
     // Add heading
     $this->table->set_heading(array(
@@ -23,21 +27,16 @@
     // Add saved slides
     foreach ($slides as $i => $slide) {
         $this->table->add_row(
-            '&#9776;'.form_hidden('slide_id[]',          $i),
+            '&#9776;',
             $this->file_field->field("slide_{$i}_image", $slide['image']),
             form_textarea("slide_{$i}_caption",          $slide['caption']),
             form_textarea("slide_{$i}_link",             $slide['link']),
             form_textarea("slide_{$i}_alt_text",         $slide['alt_text']),
-            '-'
+            '<a href="#" class="js-nivo-remove-slide nivo-remove-slide">-</a>'
         );
     }
 
     // Output table
     echo $this->table->generate();
 ?>
-<div class="store_ft_add">
-    <a href="#" id="store_product_modifiers_add" data-new-mod-key="2">
-        <i>+</i>
-        Add Slide
-    </a>
-</div>
+<a href="#" class="js-nivo-add-slide nivo-add-slide">Add Slide</a>

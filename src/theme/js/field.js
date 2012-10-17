@@ -1,0 +1,1 @@
+(function(){var e="click",t="preventDefault";$(function(){var r=$(".js-nivo-table tbody");$(".js-nivo-add-slide").on(e,function(e){e[t]();console.log("add...");return!1});return r.on(e,".js-nivo-remove-slide",function(e){var i;e[t]();$(this).closest("tr").remove();i=$("tr",r);i.length===1&&$("td",i).show();return!1})})}).call(this);

@@ -22,12 +22,8 @@ class Jw_nivo_ft extends EE_Fieldtype {
     );
 
 
-    /**
-     * Cache installed slider themes
-     *
-     * @var null|array
-     */
     private $_themes = null;
+    private $_theme_url = null;
     private $_default_theme = 'default';
 
 
@@ -104,6 +100,9 @@ class Jw_nivo_ft extends EE_Fieldtype {
         // Load the table and file_field libs
         $this->EE->load->library('table');
         $this->EE->load->library('file_field');
+
+        // Include JS file
+        $this->_include_theme_js('js/field.js');
 
         // Setup file_field
         $this->EE->file_field->browser(array(
@@ -297,6 +296,37 @@ class Jw_nivo_ft extends EE_Fieldtype {
             lang('theme'),
             form_dropdown('theme', $this->get_theme_options(), $current['theme'])
         );
+    }
+
+// ----------------------------------------------------------------------------- ASSET LOADING
+
+    /**
+     * Theme URL
+     */
+    private function _theme_url()
+    {
+        if ($this->_theme_url === null){
+            $theme_folder_url = defined('URL_THIRD_THEMES') ? URL_THIRD_THEMES : $this->EE->config->slash_item('theme_folder_url').'third_party/';
+            $this->_theme_url = $theme_folder_url.'jw_nivo/';
+        }
+
+        return $this->_theme_url;
+    }
+
+    /**
+     * Include Theme CSS
+     */
+    private function _include_theme_css($file)
+    {
+        $this->EE->cp->add_to_head('<link rel="stylesheet" type="text/css" href="'.$this->_theme_url().$file.'?'.JW_NIVO_VERSION.'" />');
+    }
+
+    /**
+     * Include Theme JS
+     */
+    private function _include_theme_js($file)
+    {
+        $this->EE->cp->add_to_foot('<script type="text/javascript" src="'.$this->_theme_url().$file.'?'.JW_NIVO_VERSION.'"></script>');
     }
 
 }
