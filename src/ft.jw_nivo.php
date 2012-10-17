@@ -101,13 +101,14 @@ class Jw_nivo_ft extends EE_Fieldtype {
         $this->EE->load->library('table');
         $this->EE->load->library('file_field');
 
-        // Include JS file
+        // Include assets
         $this->_include_theme_js('js/field.js');
+        $this->_include_theme_css('css/field.css');
 
         // Setup file_field
         $this->EE->file_field->browser(array(
             'publish' => true,
-            'settings' => '{"content_type": "all/image", "directory": "all/<directory_id>"}',
+            'settings' => '{"content_type": "image", "directory": "1"}',
         ));
 
         // Instantiate vars

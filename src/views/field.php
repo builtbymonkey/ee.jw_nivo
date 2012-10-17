@@ -1,42 +1,38 @@
 
-<?php
-    // Prep table
-    $this->table->set_template(array(
-        'table_open'      => '<table class="mainTable padTable js-nivo-table" border="0" cellspacing="0" cellpadding="0">',
-        'row_start'       => '<tr class="even">',
-        'row_alt_start'   => '<tr class="odd">'
-    ));
-
-    // Add heading
-    $this->table->set_heading(array(
-        array('data' => '',               'style' => 'width: 2%'),
-        array('data' => lang('image'),    'style' => 'width: 9%'),
-        array('data' => lang('caption'),  'style' => 'width: 29%'),
-        array('data' => lang('link'),     'style' => 'width: 29%'),
-        array('data' => lang('alt_text'), 'style' => 'width: 29%'),
-        array('data' => '',               'style' => 'width: 2%')
-    ));
-
-    // Add the no slides row, but hide if there are rows
-    $this->table->add_row(array(
-        'data'    => '<em>'.lang('no_slides').'</em>',
-        'colspan' => 6,
-        'style'   => (count($slides) > 0) ? 'display: none;' : ''
-    ));
-
-    // Add saved slides
-    foreach ($slides as $i => $slide) {
-        $this->table->add_row(
-            '&#9776;',
-            $this->file_field->field("slide_{$i}_image", $slide['image']),
-            form_textarea("slide_{$i}_caption",          $slide['caption']),
-            form_textarea("slide_{$i}_link",             $slide['link']),
-            form_textarea("slide_{$i}_alt_text",         $slide['alt_text']),
-            '<a href="#" class="js-nivo-remove-slide nivo-remove-slide">-</a>'
-        );
-    }
-
-    // Output table
-    echo $this->table->generate();
-?>
-<a href="#" class="js-nivo-add-slide nivo-add-slide">Add Slide</a>
+<table class="mainTable padTable js-nivo-table nivo-table" border="0" cellspacing="0" cellpadding="0">
+    <thead>
+        <th style="width:  3%"></th>
+        <th style="width: 13%"><?= lang('image') ?></th>
+        <th style="width: 27%"><?= lang('caption') ?></th>
+        <th style="width: 27%"><?= lang('link') ?></th>
+        <th style="width: 27%"><?= lang('alt_text') ?></th>
+        <th style="width:  3%"></th>
+    </thead>
+    <tbody>
+        <tr class="js-nivo-no-slides <?= (count($slides) > 0) ? 'is-hidden' : '' ?>">
+            <td colspan="6">
+                <em><?= lang('no_slides') ?></em>
+            </td>
+        </tr>
+        <tr class="js-nivo-slide-template is-hidden">
+            <td>&#9776;</td>
+            <td><?= $this->file_field->field("slide_image_#") ?></td>
+            <td><?= form_textarea("slide_caption_#") ?></td>
+            <td><?= form_textarea("slide_link_#") ?></td>
+            <td><?= form_textarea("slide_alt_text_#") ?></td>
+            <td><a href="#" class="js-nivo-remove-slide nivo-remove-button">&minus;</a></td>
+        </tr>
+        <?php foreach ($slides as $i => $slide): ?>
+        <tr class="js-nivo-slide">
+            <td>&#9776;</td>
+            <td><?= $this->file_field->field("slide_image_{$i}", $slide['image']) ?></td>
+            <td><?= form_textarea("slide_caption_{$i}",          $slide['caption']) ?></td>
+            <td><?= form_textarea("slide_link_{$i}",             $slide['link']) ?></td>
+            <td><?= form_textarea("slide_alt_text_{$i}",         $slide['alt_text']) ?></td>
+            <td><a href="#" class="js-nivo-remove-slide nivo-remove-button">&minus;</a></td>
+        </tr>
+        <?php endforeach ?>
+        <input type="hidden" name="slide_count" value="<?= $i ?>">
+    </tbody>
+</table>
+<a href="#" class="js-nivo-add-slide nivo-add-link">Add Slide</a>

@@ -1,0 +1,41 @@
+
+.nivo-table {
+    margin-bottom: 1em;
+}
+
+/* Override EE style */
+table.nivo-table tr.odd td {
+    background-color: #ebf0f2;
+}
+
+table.nivo-table tr:nth-child(odd) td {
+    background-color: #f4f6f6;
+}
+
+.nivo-table th {
+    cursor: default;
+}
+
+.nivo-table textarea {
+    height: 132px;
+    resize: none;
+}
+
+.nivo-remove-button,
+.nivo-add-link:before {
+    border: 1px solid #d0d7df;
+    border-radius: 50%;
+    display: inline-block;
+    line-height: 15px;
+    text-align: center;
+    text-decoration: none !important;
+    width: 15px;
+}
+.nivo-add-link:before {
+    content: "+";
+    margin-right: 0.41em;
+}
+
+.is-hidden {
+    display: none !important;
+}

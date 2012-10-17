@@ -1,6 +1,10 @@
 $ ->
 
     $nivo_table = $('.js-nivo-table tbody')
+    $nivo_templ = $('.js-nivo-slide-template')
+    $nivo_empty = $('.js-nivo-no-slides')
+    $slide_count = $('[name=slide_count]')
+
 
     #
     # Add Slide
@@ -8,9 +12,65 @@ $ ->
     $('.js-nivo-add-slide').on 'click', (e) ->
         e.preventDefault()
 
-        console.log "add..."
+        # Hide 'no slides'
+        $nivo_empty.addClass('is-hidden')
 
+        # Clone the slide template
+        $new_row = $nivo_templ.clone().appendTo($nivo_table)
+            .removeClass('js-nivo-slide-template')
+            .addClass('js-nivo-slide')
+
+        # Get row ID
+        row_id = parseInt($slide_count.val(), 10) + 1
+        $slide_count.val(row_id)
+
+        # Update the name on all fields
+        $('[name]', $new_row).each (i) ->
+            $field = $(this)
+            $field.attr('name', $field.attr('name').replace('#', row_id))
+
+        # Initialize the file browser for this row. Normally a deep clone of the
+        #  row would copy the file_browser events with it, but because we are
+        #  updating the name of the fields, the cloned events can't find the
+        #  right elements to update.
+        file_field = "slide_image_#{row_id}"
+        $file_field = $(file_field)
+        $.ee_filebrowser.add_trigger $('.choose_file', $new_row), file_field, {
+                content_type: $file_field.data 'content-type'
+                directory:    $file_field.data 'directory'
+            },
+            # Callback for when an image is selected
+            (file, field) ->
+                directory   = file.upload_location_id
+                name        = file.file_name
+                thumb       = file.thumb
+                $thumb      = $('.file_set', $new_row)
+                $field_dir  = $("[name=#{file_field}_hidden_dir]")
+                $field_file = $("[name=#{file_field}_hidden]")
+
+                # Validation
+                return if not (directory and name)
+
+                # Update the input values
+                $field_dir.val(directory)
+                $field_file.val(name)
+
+                # Update 'remove image'
+                $('.remove_file', $new_row).on 'click', (e) ->
+                    $thumb.addClass('js_hide')
+                    $field_dir.val('')
+                    $field_file.val('')
+
+                # Load the new thumbnail
+                $('img', $thumb).attr('src', thumb);
+                $thumb.removeClass('js_hide')
+
+        # Show row
+        $new_row.removeClass('is-hidden')
+
+        # Prevent default
         false
+
 
     #
     # Remove Slide
@@ -18,14 +78,16 @@ $ ->
     $nivo_table.on 'click', '.js-nivo-remove-slide', (e) ->
         e.preventDefault()
 
-        $(this).closest('tr').remove()
+        # Remove this slide
+        $(this).closest('.js-nivo-slide').remove()
 
         # Show 'no slides' if there are none
-        $rows = $('tr', $nivo_table)
-        if ($rows.length is 1)
-            $('td', $rows).show()
+        if not $('.js-nivo-slide').length
+            $nivo_empty.removeClass('is-hidden')
 
+        # Prevent default
         false
+
 
     #
     # Re-order Slides
