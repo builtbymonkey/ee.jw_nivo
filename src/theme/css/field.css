@@ -21,21 +21,29 @@ table.nivo-table tr:nth-child(odd) td {
     resize: none;
 }
 
-.nivo-remove-button,
-.nivo-add-link:before {
-    border: 1px solid #d0d7df;
+.nivo-button {
+    border: 1px solid;/* #d0d7df; */
     border-radius: 50%;
     display: inline-block;
-    line-height: 15px;
+    line-height: 13px;
+    padding-top: 2px;
     text-align: center;
     text-decoration: none !important;
     width: 15px;
 }
-.nivo-add-link:before {
-    content: "+";
-    margin-right: 0.41em;
+
+.nivo-add-link {
+    text-decoration: none !important;
 }
+
+/*.nivo-handle {
+    cursor: move;
+}*/
 
 .is-hidden {
     display: none !important;
+}
+
+.is-dragging td {
+    background-color: #dde2e5 !important;
 }

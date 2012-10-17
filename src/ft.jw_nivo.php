@@ -102,6 +102,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         $this->EE->load->library('file_field');
 
         // Include assets
+        $this->_include_theme_js('js/jquery.tablednd.js');
         $this->_include_theme_js('js/field.js');
         $this->_include_theme_css('css/field.css');
 

@@ -1,8 +1,9 @@
 $ ->
 
-    $nivo_table = $('.js-nivo-table tbody')
-    $nivo_templ = $('.js-nivo-slide-template')
-    $nivo_empty = $('.js-nivo-no-slides')
+    $nivo_field  = $('.js-nivo-table').closest('.holder')
+    $nivo_table  = $('.js-nivo-table tbody')
+    $nivo_templ  = $('.js-nivo-slide-template')
+    $nivo_empty  = $('.js-nivo-no-slides')
     $slide_count = $('[name=slide_count]')
 
 
@@ -21,7 +22,7 @@ $ ->
             .addClass('js-nivo-slide')
 
         # Get row ID
-        row_id = parseInt($slide_count.val(), 10) + 1
+        row_id = $('.js-nivo-slide', $nivo_table).length
         $slide_count.val(row_id)
 
         # Update the name on all fields
@@ -81,9 +82,15 @@ $ ->
         # Remove this slide
         $(this).closest('.js-nivo-slide').remove()
 
+        # Update row count
+        $slide_count.val($('.js-nivo-slide', $nivo_table).length)
+
         # Show 'no slides' if there are none
         if not $('.js-nivo-slide').length
             $nivo_empty.removeClass('is-hidden')
+        # Update field names
+        else
+            update_field_names()
 
         # Prevent default
         false
@@ -92,3 +99,22 @@ $ ->
     #
     # Re-order Slides
     #
+    $nivo_table.tableDnD({
+        onDragClass: 'is-dragging'
+        onDrop: ->
+            update_field_names()
+    })
+
+
+    #
+    # Update Field Names
+    #
+    update_field_names = ->
+        count = 0
+        $('.js-nivo-slide', $nivo_table).each (i) ->
+            $(this).data('index', i + 1)
+            $('[name]', $(this)).each (j) ->
+                $field = $(this)
+                $field.attr('name', $field.attr('name').replace(/\d+/, i + 1))
+
+    update_field_names()
