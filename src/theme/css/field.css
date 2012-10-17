@@ -1,6 +1,6 @@
 
 .nivo-table {
-    margin-bottom: 1em;
+    margin: 0.75em 0;
 }
 
 /* Override EE style */
@@ -36,9 +36,18 @@ table.nivo-table tr:nth-child(odd) td {
     text-decoration: none !important;
 }
 
-/*.nivo-handle {
+.nivo-handle {
     cursor: move;
-}*/
+}
+
+.nivo-label {
+    font-weight: bold !important;
+    margin-top: 1em;
+}
+
+.nivo-field-pane {
+    margin: 0.75em 0;
+}
 
 .is-hidden {
     display: none !important;

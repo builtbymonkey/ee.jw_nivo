@@ -61,10 +61,14 @@
       return false;
     });
     $nivo_table.tableDnD({
+      dragHandle: '.js-reorder-handle',
       onDragClass: 'is-dragging',
       onDrop: function() {
         return update_field_names();
       }
+    });
+    $('#publishForm').on('submit', function(e) {
+      return $nivo_templ.remove();
     });
     update_field_names = function() {
       var count;
@@ -78,7 +82,19 @@
         });
       });
     };
-    return update_field_names();
+    update_field_names();
+    return $('.js-nivo-field-label').on('click', function(e) {
+      var $img, $label;
+      $label = $(this);
+      $img = $('img', $label);
+      if ($img.attr('src').indexOf('field_collapse') > 0) {
+        $img.attr('src', $img.attr('src').replace('field_collapse', 'field_expand'));
+        return $label.next('.js-nivo-field-pane').slideDown();
+      } else {
+        $img.attr('src', $img.attr('src').replace('field_expand', 'field_collapse'));
+        return $label.next('.js-nivo-field-pane').slideUp();
+      }
+    });
   });
 
 }).call(this);

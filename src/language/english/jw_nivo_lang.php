@@ -9,6 +9,8 @@ $lang = array(
 'link'             => 'Link',
 'alt_text'         => 'Alt Text',
 'no_slides'        => 'You haven\'t created any slides yet!',
+'settings'         => 'Settings',
+'add_slide'        => 'Add Slide',
 
 
 // END

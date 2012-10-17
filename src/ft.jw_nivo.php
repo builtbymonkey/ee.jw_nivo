@@ -24,7 +24,9 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
     private $_themes = null;
     private $_theme_url = null;
-    private $_default_theme = 'default';
+    private $_defaults = array(
+        'theme' => 'default'
+    );
 
 
 // ----------------------------------------------------------------------------- CONSTRUCTOR
@@ -58,7 +60,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function replace_tag($data, $params=array(), $tagdata=FALSE)
     {
-        // code..
+        return 'hello';
     }
 
 
@@ -113,21 +115,10 @@ class Jw_nivo_ft extends EE_Fieldtype {
         ));
 
         // Instantiate vars
-        $vars = array();
+        $vars = unserialize(base64_decode($field_data));
 
-        $vars['slides'] = array();
-        $vars['slides'][] = array(
-            'image'    => 'http://placekitten.com/300/300',
-            'caption'  => 'a gorgeous little kitten!',
-            'link'     => 'http://jeremyworboys.com',
-            'alt_text' => 'A Cat'
-        );
-        $vars['slides'][] = array(
-            'image'    => 'http://placekitten.com/300/300',
-            'caption'  => 'a gorgeous little kitten!',
-            'link'     => 'http://jeremyworboys.com',
-            'alt_text' => 'A Cat'
-        );
+        $this->prep_prefs_table($vars, 'settings');
+        $vars['settings_html'] = $this->EE->table->generate();
 
         return $this->EE->load->view('field', $vars, true);
     }
@@ -144,7 +135,27 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function save($data)
     {
-        // code...
+        $this->EE->load->library('file_field');
+
+        $data = array();
+
+        $data['slides'] = array();
+        $count = intval($this->EE->input->post('slide_count')) + 1;
+        for ($i=1; $i < $count; $i++) {
+            $slide = array();
+            $image_file        = $this->EE->input->post('slide_image_'.$i.'_hidden');
+            $image_dir         = $this->EE->input->post('slide_image_'.$i.'_hidden_dir');
+            $slide['image']    = $this->EE->file_field->format_data($image_file, $image_dir);
+            $slide['caption']  = $this->EE->input->post('slide_caption_'.$i);
+            $slide['link']     = $this->EE->input->post('slide_link_'.$i);
+            $slide['alt_text'] = $this->EE->input->post('slide_alt_text_'.$i);
+
+            $data['slides'][] = $slide;
+        }
+
+        $data['settings'] = $this->EE->input->post('settings');
+
+        return base64_encode(serialize($data));
     }
 
 
@@ -159,7 +170,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     public function install()
     {
         return array(
-            'theme' => $this->_default_theme
+            // 'theme' => $this->_default_theme
         );
     }
 
@@ -167,61 +178,61 @@ class Jw_nivo_ft extends EE_Fieldtype {
 // ----------------------------------------------------------------------------- GLOBAL SETTINGS
 
 
-    /**
-     * Display Global Settings
-     *
-     * @return string The form displayed on the global settings page
-     */
-    public function display_global_settings()
-    {
-        $val = array_merge($this->settings, $_POST);
-
-        $this->prep_prefs_table($val);
-
-        return $this->EE->table->generate();
-    }
-
-
-    /**
-     * Save Global Settings
-     *
-     * @return array The global settings values
-     */
-    function save_global_settings()
-    {
-        return array(
-            'theme' => isset($_POST['theme']) ? $_POST['theme'] : $this->_default_theme
-        );
-    }
-
-
-// ----------------------------------------------------------------------------- INDIVIDUAL SETTINGS
-
-
     // /**
-    //  * Display Settings
+    //  * Display Global Settings
     //  *
-    //  * @return string The form displayed on the settings page
+    //  * @return string The form displayed on the global settings page
     //  */
-    // public function display_settings($data)
+    // public function display_global_settings()
     // {
-    //     $this->prep_prefs_table($data);
+    //     $val = array_merge($this->settings, $_POST);
+
+    //     $this->prep_prefs_table($val);
 
     //     return $this->EE->table->generate();
     // }
 
 
     // /**
-    //  * Save Settings
+    //  * Save Global Settings
     //  *
-    //  * @return array The settings values
+    //  * @return array The global settings values
     //  */
-    // function save_settings()
+    // function save_global_settings()
     // {
     //     return array(
-    //         'theme' => $this->EE->input->post('theme')
+    //         'theme' => isset($_POST['theme']) ? $_POST['theme'] : $this->_default_theme
     //     );
     // }
+
+
+// ----------------------------------------------------------------------------- INDIVIDUAL SETTINGS
+
+
+    /**
+     * Display Settings
+     *
+     * @return string The form displayed on the settings page
+     */
+    public function display_settings($data)
+    {
+        $this->prep_prefs_table($data);
+
+        return $this->EE->table->generate();
+    }
+
+
+    /**
+     * Save Settings
+     *
+     * @return array The settings values
+     */
+    function save_settings()
+    {
+        return array(
+            'theme' => $this->EE->input->post('theme')
+        );
+    }
 
 
 // ----------------------------------------------------------------------------- PRIVATE METHODS
@@ -280,12 +291,28 @@ class Jw_nivo_ft extends EE_Fieldtype {
      *
      * @param array Current values for settings
      */
-    private function prep_prefs_table($current)
+    private function prep_prefs_table($current, $group=null)
     {
         // Load the table lib
         $this->EE->load->library('table');
 
-        // use the default template known as $cp_pad_table_template in the views
+        // Extend defaults
+        if (!is_array($current)) {
+            if ($group !== null) {
+                $current = array($group => array());
+            }
+            else {
+                $current = array();
+            }
+        }
+        if ($group !== null) {
+            $current[$group] = array_merge($this->_defaults, $current[$group]);
+        }
+        else {
+            $current = array_merge($this->_defaults, $current);
+        }
+
+        // Use the default template known as $cp_pad_table_template in the views
         $this->EE->table->set_template(array(
             'table_open'      => '<table class="mainTable padTable" border="0" cellspacing="0" cellpadding="0">',
             'row_start'       => '<tr class="even">',
@@ -296,7 +323,8 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         $this->EE->table->add_row(
             lang('theme'),
-            form_dropdown('theme', $this->get_theme_options(), $current['theme'])
+            ($group !== null) ? form_dropdown($group.'[theme]', $this->get_theme_options(), $current[$group]['theme'])
+                              : form_dropdown('theme',          $this->get_theme_options(), $current['theme'])
         );
     }
 

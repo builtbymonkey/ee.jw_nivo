@@ -100,10 +100,18 @@ $ ->
     # Re-order Slides
     #
     $nivo_table.tableDnD({
+        dragHandle: '.js-reorder-handle'
         onDragClass: 'is-dragging'
         onDrop: ->
             update_field_names()
     })
+
+
+    #
+    # Remove template on submit
+    #
+    $('#publishForm').on 'submit', (e) ->
+        $nivo_templ.remove()
 
 
     #
@@ -118,3 +126,19 @@ $ ->
                 $field.attr('name', $field.attr('name').replace(/\d+/, i + 1))
 
     update_field_names()
+
+
+    #
+    # Toggle Settings
+    #
+    $('.js-nivo-field-label').on 'click', (e) ->
+        $label = $(this)
+        $img = $('img', $label)
+
+        if $img.attr('src').indexOf('field_collapse') > 0
+            $img.attr('src', $img.attr('src').replace('field_collapse', 'field_expand'))
+            $label.next('.js-nivo-field-pane').slideDown()
+
+        else
+            $img.attr('src', $img.attr('src').replace('field_expand', 'field_collapse'))
+            $label.next('.js-nivo-field-pane').slideUp()

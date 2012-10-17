@@ -133,18 +133,21 @@ jQuery.tableDnD = {
 
     /** This function makes all the rows on the table draggable apart from those marked as "NoDrag" */
     makeDraggable: function(table) {
-
         var config = table.tableDnDConfig;
         if (config.dragHandle) {
             // We only need to add the event to the specified cells
-            var cells = jQuery(table.tableDnDConfig.dragHandle, table);
-            cells.each(function() {
-                // The cell is bound to "this"
-                jQuery(this).bind(startEvent, function(ev) {
-                    jQuery.tableDnD.initialiseDrag(jQuery(this).parents('tr')[0], table, this, ev, config);
-                    return false;
-                });
-            })
+            $(table).on(startEvent, config.dragHandle, function (ev) {
+                jQuery.tableDnD.initialiseDrag(jQuery(ev.target).parents('tr')[0], table, this, ev, config);
+                return false;
+            });
+            // var cells = jQuery(table.tableDnDConfig.dragHandle, table);
+            // cells.each(function() {
+            //     // The cell is bound to "this"
+            //     jQuery(this).bind(startEvent, function(ev) {
+            //         jQuery.tableDnD.initialiseDrag(jQuery(this).parents('tr')[0], table, this, ev, config);
+            //         return false;
+            //     });
+            // })
         } else {
             // For backwards compatibility, we add the event to the whole row
             var rows = jQuery("tr", table); // get all the rows as a wrapped set
