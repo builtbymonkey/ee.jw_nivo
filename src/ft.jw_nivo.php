@@ -75,30 +75,8 @@ class Jw_nivo_ft extends EE_Fieldtype {
      * @param  array  The data previously entered into this field
      * @return string The HTML output to be displayed for this field
      */
-    public function display_field($field_data)
+    public function display_field($data)
     {
-        /**
-         * - Image matrix
-         *   - Image
-         *   - Caption
-         *   - Link
-         *   - Alt text
-         * - Theme
-         * - Transition
-         *   - Slices (for Slice transition)
-         *   - Rows + Cols (for Box transition)
-         * - Sizing
-         *   - size if fixed
-         * - Animation speed
-         * - Pause Time
-         * - Enable Thumbnail Navigation
-         * - Enable Direction Navigation (arrows)
-         * - Enable Control Navigation (1,2,3...)
-         * - Pause on Hover
-         * - Manual transition (no auto change)
-         * - Random slide start
-         */
-
         // Load the table and file_field libs
         $this->EE->load->library('table');
         $this->EE->load->library('file_field');
@@ -114,9 +92,17 @@ class Jw_nivo_ft extends EE_Fieldtype {
             'settings' => '{"content_type": "image", "directory": "1"}',
         ));
 
-        // Instantiate vars
-        $vars = unserialize(base64_decode($field_data));
+        // Extract saved data
+        $vars = unserialize(base64_decode($data));
+        $channel_settings = unserialize(base64_decode($this->settings['field_settings']));
 
+        // Merge entry settings with channel settings
+        if (!isset($vars['settings'])) {
+            $vars['settings'] = array();
+        }
+        $vars['settings'] = array_merge($channel_settings, $vars['settings']);
+
+        // Build the settings table
         $this->prep_prefs_table($vars, 'settings');
         $vars['settings_html'] = $this->EE->table->generate();
 
@@ -139,6 +125,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         $data = array();
 
+        // Combine slides into an array
         $data['slides'] = array();
         $count = intval($this->EE->input->post('slide_count')) + 1;
         for ($i=1; $i < $count; $i++) {
@@ -320,6 +307,23 @@ class Jw_nivo_ft extends EE_Fieldtype {
         ));
 
         $this->EE->table->set_heading(array('data' => lang('nivo_preferences'), 'style' => 'width: 40%'), '');
+
+        /**
+         * - Theme
+         * - Transition
+         *   - Slices (for Slice transition)
+         *   - Rows + Cols (for Box transition)
+         * - Sizing
+         *   - size if fixed
+         * - Animation speed
+         * - Pause Time
+         * - Enable Thumbnail Navigation
+         * - Enable Direction Navigation (arrows)
+         * - Enable Control Navigation (1,2,3...)
+         * - Pause on Hover
+         * - Manual transition (no auto change)
+         * - Random slide start
+         */
 
         $this->EE->table->add_row(
             lang('theme'),
