@@ -11,6 +11,7 @@ $lang = array(
 'no_slides'        => 'You haven\'t created any slides yet!',
 'settings'         => 'Settings',
 'add_slide'        => 'Add Slide',
+'image_required'   => 'There must be an image for every slide',
 
 
 // END

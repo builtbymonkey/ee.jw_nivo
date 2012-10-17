@@ -92,8 +92,14 @@ class Jw_nivo_ft extends EE_Fieldtype {
             'settings' => '{"content_type": "image", "directory": "1"}',
         ));
 
-        // Extract saved data
-        $vars = unserialize(base64_decode($data));
+        // Get saved data
+        if (!empty($data)) {
+            $vars = unserialize(base64_decode($data));
+        }
+        // Failed validation
+        else {
+            $vars = $this->get_post_data();
+        }
         $channel_settings = unserialize(base64_decode($this->settings['field_settings']));
 
         // Merge entry settings with channel settings
@@ -111,6 +117,34 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
 
     /**
+     * Validates the Field Input
+     *
+     * @param  array The data entered into this field
+     * @return mixed Must return TRUE or an error message
+     */
+    public function validate($data)
+    {
+        $data = $this->get_post_data();
+
+        if (count($data['slides']) > 0) {
+            foreach ($data['slides'] as $slide) {
+                if (empty($slide['image'])) {
+                    return lang('image_required');
+                }
+            }
+        }
+        else {
+            // is this a required field?
+            if (isset($this->settings['field_required']) && $this->settings['field_required'] == 'y') {
+                return lang('required');
+            }
+        }
+
+        return true;
+    }
+
+
+    /**
      * Prepare for Saving the Field
      *
      * This method prepares the data to be saved to the entries table in the
@@ -121,26 +155,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function save($data)
     {
-        $this->EE->load->library('file_field');
-
-        $data = array();
-
-        // Combine slides into an array
-        $data['slides'] = array();
-        $count = intval($this->EE->input->post('slide_count')) + 1;
-        for ($i=1; $i < $count; $i++) {
-            $slide = array();
-            $image_file        = $this->EE->input->post('slide_image_'.$i.'_hidden');
-            $image_dir         = $this->EE->input->post('slide_image_'.$i.'_hidden_dir');
-            $slide['image']    = $this->EE->file_field->format_data($image_file, $image_dir);
-            $slide['caption']  = $this->EE->input->post('slide_caption_'.$i);
-            $slide['link']     = $this->EE->input->post('slide_link_'.$i);
-            $slide['alt_text'] = $this->EE->input->post('slide_alt_text_'.$i);
-
-            $data['slides'][] = $slide;
-        }
-
-        $data['settings'] = $this->EE->input->post('settings');
+        $data = $this->get_post_data();
 
         return base64_encode(serialize($data));
     }
@@ -223,6 +238,36 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
 
 // ----------------------------------------------------------------------------- PRIVATE METHODS
+
+
+    /**
+     * Get POST Data
+     */
+    private function get_post_data()
+    {
+        $this->EE->load->library('file_field');
+
+        $data = array();
+
+        // Combine slides into an array
+        $data['slides'] = array();
+        $count = intval($this->EE->input->post('slide_count')) + 1;
+        for ($i=1; $i < $count; $i++) {
+            $slide = array();
+            $image_file        = $this->EE->input->post('slide_image_'.$i.'_hidden');
+            $image_dir         = $this->EE->input->post('slide_image_'.$i.'_hidden_dir');
+            $slide['image']    = $this->EE->file_field->format_data($image_file, $image_dir);
+            $slide['caption']  = $this->EE->input->post('slide_caption_'.$i);
+            $slide['link']     = $this->EE->input->post('slide_link_'.$i);
+            $slide['alt_text'] = $this->EE->input->post('slide_alt_text_'.$i);
+
+            $data['slides'][] = $slide;
+        }
+
+        $data['settings'] = $this->EE->input->post('settings');
+
+        return $data;
+    }
 
 
     /**

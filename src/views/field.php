@@ -2,7 +2,7 @@
 <table class="mainTable padTable js-nivo-table nivo-table" border="0" cellspacing="0" cellpadding="0">
     <thead>
         <th style="width:  3%"></th>
-        <th style="width: 13%"><?= lang('image') ?></th>
+        <th style="width: 13%"><em class="required">* </em><?= lang('image') ?></th>
         <th style="width: 27%"><?= lang('caption') ?></th>
         <th style="width: 27%"><?= lang('link') ?></th>
         <th style="width: 27%"><?= lang('alt_text') ?></th>
