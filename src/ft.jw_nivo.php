@@ -30,12 +30,12 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
     private $_defaults = array(
         'theme'          => 'default',
-        'sizing'         => 'fixed',
+        'sizing'         => 'responsive',
         'size'           => array(
             'width'          => 400,
             'height'         => 150
         ),
-        'transition'     => 'fade',
+        'transition'     => 'random',
         'slices'         => 15,
         'box'            => array(
             'cols'           => 8,
@@ -43,17 +43,17 @@ class Jw_nivo_ft extends EE_Fieldtype {
         ),
         'speed'          => 500,
         'pause'          => 3000,
-        'random_start'   => 'n',
-        // 'start'          => 0,
-        'direction_nav'  => 'n',
-        'control_nav'    => 'n',
+        'direction_nav'  => 'y',
+        'control_nav'    => 'y',
         'thumbnail_nav'  => 'n',
         'thumbnail_size' => array(
             'width'          => 70,
             'height'         => 50
         ),
-        'pause_on_hover' => 'n',
+        'pause_on_hover' => 'y',
         'manual'         => 'n',
+        'random_start'   => 'n',
+        // 'start'          => 0,
     );
 
     private $sizing_options     = array('fixed', 'responsive');
