@@ -283,53 +283,6 @@ class Jw_nivo_ft extends EE_Fieldtype {
     }
 
 
-// ----------------------------------------------------------------------------- INSTALLATION
-
-
-    /**
-     * Install
-     *
-     * @return array The global settings values
-     */
-    public function install()
-    {
-        return array(
-            // 'theme' => $this->_default_theme
-        );
-    }
-
-
-// ----------------------------------------------------------------------------- GLOBAL SETTINGS
-
-
-    // /**
-    //  * Display Global Settings
-    //  *
-    //  * @return string The form displayed on the global settings page
-    //  */
-    // public function display_global_settings()
-    // {
-    //     $val = array_merge($this->settings, $_POST);
-
-    //     $this->prep_prefs_table($val);
-
-    //     return $this->EE->table->generate();
-    // }
-
-
-    // /**
-    //  * Save Global Settings
-    //  *
-    //  * @return array The global settings values
-    //  */
-    // function save_global_settings()
-    // {
-    //     return array(
-    //         'theme' => isset($_POST['theme']) ? $_POST['theme'] : $this->_default_theme
-    //     );
-    // }
-
-
 // ----------------------------------------------------------------------------- CHANNEL SETTINGS
 
 
