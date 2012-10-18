@@ -274,6 +274,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         if (empty($this->cache['post_data'][$this->field_id])) return;
 
         $data = $this->cache['post_data'][$this->field_id];
+        $data['settings'] = $this->prep_settings($data['settings']);
         $data['entry_id'] = $this->settings['entry_id'];
         $data = base64_encode(serialize($data));
 
@@ -295,7 +296,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     {
         $this->_include_theme_js('js/field.js');
 
-        $this->prep_prefs_table($data);
+        $this->prep_prefs_table(array('nivo_settings' => $data), 'nivo_settings');
 
         return $this->EE->table->generate();
     }
@@ -306,11 +307,9 @@ class Jw_nivo_ft extends EE_Fieldtype {
      *
      * @return array The settings values
      */
-    function save_settings()
+    function save_settings($data)
     {
-        return array(
-            'theme' => $this->EE->input->post('theme')
-        );
+        return $this->prep_settings($this->EE->input->post('nivo_settings'));
     }
 
 
@@ -642,6 +641,28 @@ class Jw_nivo_ft extends EE_Fieldtype {
         );
     }
 
+
+    /**
+     * Prep Settings
+     *
+     * @param array Settings to be saved
+     * @return array Prepped settings
+     */
+    private function prep_settings($settings)
+    {
+        if(!is_numeric($settings['size']['width'])            OR $settings['size']['width']            <= 0 ) $settings['size']['width']            = $this->_defaults['size']['width'];
+        if(!is_numeric($settings['size']['height'])           OR $settings['size']['height']           <= 0 ) $settings['size']['height']           = $this->_defaults['size']['height'];
+        if(!is_numeric($settings['slices'])                   OR $settings['slices']                   <= 0 ) $settings['slices']                   = $this->_defaults['slices'];
+        if(!is_numeric($settings['box']['cols'])              OR $settings['box']['cols']              <= 0 ) $settings['box']['cols']              = $this->_defaults['box']['cols'];
+        if(!is_numeric($settings['box']['rows'])              OR $settings['box']['rows']              <= 0 ) $settings['box']['rows']              = $this->_defaults['box']['rows'];
+        if(!is_numeric($settings['speed'])                    OR $settings['speed']                    <= 0 ) $settings['speed']                    = $this->_defaults['speed'];
+        if(!is_numeric($settings['pause'])                    OR $settings['pause']                    <= 0 ) $settings['pause']                    = $this->_defaults['pause'];
+        // if(!is_numeric($settings['start'])                    OR $settings['start']                    <  0 ) $settings['start']                    = $this->_defaults['start'];
+        if(!is_numeric($settings['thumbnail_size']['width'])  OR $settings['thumbnail_size']['width']  <= 0 ) $settings['thumbnail_size']['width']  = $this->_defaults['thumbnail_size']['width'];
+        if(!is_numeric($settings['thumbnail_size']['height']) OR $settings['thumbnail_size']['height'] <= 0 ) $settings['thumbnail_size']['height'] = $this->_defaults['thumbnail_size']['height'];
+
+        return $settings;
+    }
 
 // ----------------------------------------------------------------------------- ASSET LOADING
 
