@@ -64,7 +64,7 @@
             controlNavThumbs: <?= ($settings['thumbnail_nav']  === 'y') ? 'true' : 'false' ?>,
             pauseOnHover:     <?= ($settings['pause_on_hover'] === 'y') ? 'true' : 'false' ?>,
             manualAdvance:    <?= ($settings['manual']         === 'y') ? 'true' : 'false' ?>,
-            startSlide:       <?= ($settings['random_start']   === 'y') ? floor(rand(0, count($slides))) : $settings['start'] ?>
+            startSlide:       <?= ($settings['random_start']   === 'y') ? floor(rand(0, count($slides))) : '' //$settings['start'] ?>
 
         });
     });

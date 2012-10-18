@@ -44,7 +44,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         'speed'          => 500,
         'pause'          => 3000,
         'random_start'   => 'n',
-        'start'          => 0,
+        // 'start'          => 0,
         'direction_nav'  => 'n',
         'control_nav'    => 'n',
         'thumbnail_nav'  => 'n',
@@ -623,14 +623,14 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Start Slide
          */
-        $this->EE->table->add_row(
-            array(
-                'data'           => lang('start'),
-                'data-condition' => $this->get_field_name('random_start',  $group).'=n'
-            ),
-            form_input($this->get_field_name('start',  $group), $current['start'],  'style="width: 173px"')
-            .'<div class="subtext">'.lang('start_help').'</div>'
-        );
+        // $this->EE->table->add_row(
+        //     array(
+        //         'data'           => lang('start'),
+        //         'data-condition' => $this->get_field_name('random_start',  $group).'=n'
+        //     ),
+        //     form_input($this->get_field_name('start',  $group), $current['start'],  'style="width: 173px"')
+        //     .'<div class="subtext">'.lang('start_help').'</div>'
+        // );
 
         /*
          * Direction Navigation
