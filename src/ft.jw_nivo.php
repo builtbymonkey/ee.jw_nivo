@@ -35,8 +35,8 @@ class Jw_nivo_ft extends EE_Fieldtype {
         'transition'     => 'fade',
         'slices'         => 15,
         'box'            => array(
-            'rows'           => 8,
-            'cols'           => 4
+            'cols'           => 8,
+            'rows'           => 4
         ),
         'speed'          => 500,
         'pause'          => 3000,
@@ -81,6 +81,48 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
 
     /**
+     * Pre-Process
+     *
+     * Preprocess the data on the frontend. Multiple tag pairs in the same
+     * channel entries tag will cause replace_tag to be called multiple times.
+     * To reduce the processing required to extract the original data structure
+     * from the string (i.e. unserializing), the pre_process function is called
+     * first.
+     *
+     * @param  array  The field data
+     * @return string The prepped data
+     */
+    public function pre_process($data)
+    {
+        $this->EE->load->library('file_field');
+
+        $data = unserialize(base64_decode($data));
+
+        foreach ($data['slides'] as $i => $slide) {
+            // Do images need to be resized
+            if ($data['settings']['sizing'] === 'fixed') {
+                // TODO: Resize images
+                $data['slides'][$i]['image'] = $this->EE->file_field->parse_field($data['slides'][$i]['image']);
+            }
+            else {
+                $data['slides'][$i]['image'] = $this->EE->file_field->parse_field($data['slides'][$i]['image']);
+            }
+
+            // Do we need to create thumbnails
+            if ($data['settings']['thumbnail_nav'] === 'y') {
+                // TODO: Create thumbnails
+                $data['slides'][$i]['thumb'] = $data['slides'][$i]['image']['url'];
+            }
+            else {
+                $data['slides'][$i]['thumb'] = '';
+            }
+        }
+
+        return $data;
+    }
+
+
+    /**
      * Replace Tag
      *
      * This method replaces the field tag on the front-end
@@ -92,7 +134,18 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function replace_tag($data, $params=array(), $tagdata=FALSE)
     {
-        return 'hello';
+        $data['entry_id']       = $this->EE->extensions->last_call[0]['entry_id'];
+
+        $data['assets']   = array(
+            '<link rel="stylesheet" href="'.$this->_theme_url().'nivo-slider/nivo-slider.css?'.JW_NIVO_VERSION.'">',
+            '<script>window.jQuery || document.write(\'<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"><\/script>\')</script>',
+            '<script src="'.$this->_theme_url().'nivo-slider/jquery.nivo.slider.min.js?'.JW_NIVO_VERSION.'"></script>'
+        );
+        if (($theme = $data['settings']['theme']) !== '_none') {
+            $data['assets'][] = '<link rel="stylesheet" href="'.$this->_theme_url().'nivo-slider/themes/'.$theme.'/'.$theme.'.css?'.JW_NIVO_VERSION.'">';
+        }
+
+        return $this->EE->load->view('template', $data, true);
     }
 
 
@@ -599,7 +652,9 @@ class Jw_nivo_ft extends EE_Fieldtype {
         );
     }
 
+
 // ----------------------------------------------------------------------------- ASSET LOADING
+
 
     /**
      * Theme URL
@@ -619,7 +674,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     private function _include_theme_css($file)
     {
-        $this->EE->cp->add_to_head('<link rel="stylesheet" type="text/css" href="'.$this->_theme_url().$file.'?'.JW_NIVO_VERSION.'" />');
+        $this->EE->cp->add_to_head('<link rel="stylesheet" href="'.$this->_theme_url().$file.'?'.JW_NIVO_VERSION.'">');
     }
 
     /**
@@ -627,7 +682,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     private function _include_theme_js($file)
     {
-        $this->EE->cp->add_to_foot('<script type="text/javascript" src="'.$this->_theme_url().$file.'?'.JW_NIVO_VERSION.'"></script>');
+        $this->EE->cp->add_to_foot('<script src="'.$this->_theme_url().$file.'?'.JW_NIVO_VERSION.'"></script>');
     }
 
 }
