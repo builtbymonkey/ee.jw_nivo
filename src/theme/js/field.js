@@ -60,13 +60,15 @@
       }
       return false;
     });
-    $nivo_table.tableDnD({
-      dragHandle: '.js-reorder-handle',
-      onDragClass: 'is-dragging',
-      onDrop: function() {
-        return update_field_names();
-      }
-    });
+    if ($nivo_table.length > 0) {
+      $nivo_table.tableDnD({
+        dragHandle: '.js-reorder-handle',
+        onDragClass: 'is-dragging',
+        onDrop: function() {
+          return update_field_names();
+        }
+      });
+    }
     $('#publishForm').on('submit', function(e) {
       return $nivo_templ.remove();
     });

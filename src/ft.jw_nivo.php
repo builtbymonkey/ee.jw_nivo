@@ -240,7 +240,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     // }
 
 
-// ----------------------------------------------------------------------------- INDIVIDUAL SETTINGS
+// ----------------------------------------------------------------------------- CHANNEL SETTINGS
 
 
     /**
@@ -250,6 +250,8 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function display_settings($data)
     {
+        $this->_include_theme_js('js/field.js');
+
         $this->prep_prefs_table($data);
 
         return $this->EE->table->generate();
