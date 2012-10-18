@@ -142,3 +142,30 @@ $ ->
         else
             $img.attr('src', $img.attr('src').replace('field_expand', 'field_collapse'))
             $label.next('.js-nivo-field-pane').slideUp()
+
+
+    #
+    # Conditionally display settings
+    #
+    $('[data-condition]').each (i) ->
+        $td           = $(this)
+        $tr           = $td.closest 'tr'
+        [target, val] = $td.data('condition').split('=')
+        $target       = $("[name='#{target}']")
+        re            = new RegExp("^#{val}")
+
+        # Namespace event to avoid collisions if multiple listeners
+        $target.on "change.id_#{i}", (e) ->
+            # Get the val (different for different types of inputs)
+            if $target.is('select')
+                val = $target.val()
+            else if $target.attr('type') is 'radio'
+                val = $target.filter(':checked').val()
+
+            # Check against the target value
+            if re.test val
+                $tr.show()
+            else
+                $tr.hide()
+
+        $target.trigger "change.id_#{i}"

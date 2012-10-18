@@ -24,10 +24,42 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
     private $_themes = null;
     private $_theme_url = null;
+
     private $_defaults = array(
-        'theme' => 'default'
+        'theme'          => 'default',
+        'sizing'         => 'fixed',
+        'size'           => array(
+            'width'          => 400,
+            'height'         => 150
+        ),
+        'transition'     => 'fade',
+        'slices'         => 15,
+        'box'            => array(
+            'rows'           => 8,
+            'cols'           => 4
+        ),
+        'speed'          => 500,
+        'pause'          => 3000,
+        'random_start'   => 'n',
+        'start'          => 0,
+        'direction_nav'  => 'n',
+        'control_nav'    => 'n',
+        'thumbnail_nav'  => 'n',
+        'thumbnail_size' => array(
+            'width'          => 70,
+            'height'         => 50
+        ),
+        'pause_on_hover' => 'n',
+        'manual'         => 'n',
     );
 
+    private $sizing_options     = array('fixed', 'responsive');
+    private $transition_options = array('random', 'fade', 'fold', 'sliceDown',
+                                        'sliceDownLeft', 'sliceUp', 'sliceUpLeft',
+                                        'sliceUpDown', 'sliceUpDownLeft', 'slideInRight',
+                                        'slideInLeft', 'boxRandom', 'boxRain',
+                                        'boxRainReverse', 'boxRainGrow',
+                                        'boxRainGrowReverse');
 
 // ----------------------------------------------------------------------------- CONSTRUCTOR
 
@@ -285,14 +317,13 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         $themes_path     = $this->_slider_path.'themes';
         $contents        = array_diff(scandir($themes_path), array('..', '.')); // Strip self and parent
-        $this->_themes   = array();
+        $this->_themes   = array('_none');
 
         foreach ($contents as $f) {
             if (is_dir($themes_path.'/'.$f)) {
                 $this->_themes[] = $f;
             }
         }
-        $this->_themes[] = '_none';
 
         return $this->_themes;
     }
@@ -307,14 +338,68 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     private function get_theme_options()
     {
-        $themes    = $this->get_installed_themes();
-        $options   = array();
+        $this->theme_options = $this->get_installed_themes();
 
-        foreach ($themes as $theme) {
-            $options[$theme] = ucwords(trim(preg_replace('/[._ ]+/', ' ', $theme)));
+        return $this->format_options('theme');
+    }
+
+
+    /**
+     * Format Options
+     *
+     * @param string The options key
+     * @return array The formatted options
+     */
+    private function format_options($key)
+    {
+        $key     = $key.'_options';
+        $options = array();
+
+        foreach ($this->$key as $opt) {
+            $options[$opt] = lang($opt);
         }
 
         return $options;
+    }
+
+
+    /**
+     * Get Field Name
+     *
+     * @param string The field name
+     * @param string The field group
+     * @return array The formatted name
+     */
+    private function get_field_name($name, $group)
+    {
+        if ($group !== null) {
+            if (strpos($name, '[') !== false) {
+                list($p1, $p2) = explode('[', $name, 2);
+                $name = "{$group}[{$p1}][$p2";
+            }
+            else {
+                $name = "{$group}[{$name}]";
+            }
+        }
+        return $name;
+    }
+
+
+    /**
+     * Boolean Field
+     *
+     * @param string The field name
+     * @param string The current value
+     * @return array The prepared field
+     */
+    private function boolean_field($name, $current)
+    {
+        $s_name = str_replace(array('[',']'), '_', $name);
+
+        $out  = form_radio(array('name' => $name, 'id' => $s_name.'_y', 'value' => 'y', 'checked' => ($current==='y'))).NBS.lang('yes', $s_name.'_y').NBS.NBS.NBS.NBS.NBS;
+        $out .= form_radio(array('name' => $name, 'id' => $s_name.'_n', 'value' => 'n', 'checked' => ($current==='n'))).NBS.lang('no',  $s_name.'_n');
+
+        return $out;
     }
 
 
@@ -328,7 +413,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         // Load the table lib
         $this->EE->load->library('table');
 
-        // Extend defaults
+        // Extend defaults taking $group into consideration
         if (!is_array($current)) {
             if ($group !== null) {
                 $current = array($group => array());
@@ -339,6 +424,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         }
         if ($group !== null) {
             $current[$group] = array_merge($this->_defaults, $current[$group]);
+            $current         = $current[$group];
         }
         else {
             $current = array_merge($this->_defaults, $current);
@@ -353,27 +439,161 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         $this->EE->table->set_heading(array('data' => lang('nivo_preferences'), 'style' => 'width: 40%'), '');
 
-        /**
-         * - Theme
-         * - Transition
-         *   - Slices (for Slice transition)
-         *   - Rows + Cols (for Box transition)
-         * - Sizing
-         *   - size if fixed
-         * - Animation speed
-         * - Pause Time
-         * - Enable Thumbnail Navigation
-         * - Enable Direction Navigation (arrows)
-         * - Enable Control Navigation (1,2,3...)
-         * - Pause on Hover
-         * - Manual transition (no auto change)
-         * - Random slide start
+        /*
+         * Slider Theme
          */
-
         $this->EE->table->add_row(
             lang('theme'),
-            ($group !== null) ? form_dropdown($group.'[theme]', $this->get_theme_options(), $current[$group]['theme'])
-                              : form_dropdown('theme',          $this->get_theme_options(), $current['theme'])
+            form_dropdown($this->get_field_name('theme', $group), $this->get_theme_options(), $current['theme'])
+        );
+
+        /*
+         * Slider Sizing
+         */
+        $this->EE->table->add_row(
+            lang('sizing'),
+            form_dropdown($this->get_field_name('sizing', $group), $this->format_options('sizing'), $current['sizing'])
+            .'<div class="subtext">'.lang('sizing_help').'</div>'
+        );
+
+        /*
+         * Slider Size
+         */
+        $this->EE->table->add_row(
+            array(
+                'data'           => lang('size'),
+                'data-condition' => $this->get_field_name('sizing',  $group).'=fixed'
+            ),
+            form_input($this->get_field_name('size[width]',  $group), $current['size']['width'],  'style="width: 80px"').NBS.'&times;'.NBS.
+            form_input($this->get_field_name('size[height]', $group), $current['size']['height'], 'style="width: 80px"')
+            .'<div class="subtext">'.lang('size_help').'</div>'
+        );
+
+        /*
+         * Transition Effect
+         */
+        $this->EE->table->add_row(
+            lang('transition'),
+            form_dropdown($this->get_field_name('transition', $group), $this->format_options('transition'), $current['transition'])
+        );
+
+        /*
+         * Slices
+         */
+        $this->EE->table->add_row(
+            array(
+                'data'           => lang('slices'),
+                'data-condition' => $this->get_field_name('transition',  $group).'=slice'
+            ),
+            form_input($this->get_field_name('slices',  $group), $current['slices'],  'style="width: 173px"')
+            .'<div class="subtext">'.lang('slices_help').'</div>'
+        );
+
+        /*
+         * Box
+         */
+        $this->EE->table->add_row(
+            array(
+                'data'           => lang('box'),
+                'data-condition' => $this->get_field_name('transition',  $group).'=box'
+            ),
+            form_input($this->get_field_name('box[cols]',  $group), $current['box']['cols'],  'style="width: 80px"').NBS.'&times;'.NBS.
+            form_input($this->get_field_name('box[rows]',  $group), $current['box']['rows'],  'style="width: 80px"')
+            .'<div class="subtext">'.lang('box_help').'</div>'
+        );
+
+        /*
+         * Animation Speed
+         */
+        $this->EE->table->add_row(
+            lang('speed'),
+            form_input($this->get_field_name('speed',  $group), $current['speed'],  'style="width: 173px"')
+            .'<div class="subtext">'.lang('speed_help').'</div>'
+        );
+
+        /*
+         * Pause Time
+         */
+        $this->EE->table->add_row(
+            lang('pause'),
+            form_input($this->get_field_name('pause',  $group), $current['pause'],  'style="width: 173px"')
+            .'<div class="subtext">'.lang('pause_help').'</div>'
+        );
+
+        /*
+         * Random Start
+         */
+        $this->EE->table->add_row(
+            lang('random_start'),
+            $this->boolean_field($this->get_field_name('random_start',  $group), $current['random_start'])
+        );
+
+        /*
+         * Start Slide
+         */
+        $this->EE->table->add_row(
+            array(
+                'data'           => lang('start'),
+                'data-condition' => $this->get_field_name('random_start',  $group).'=n'
+            ),
+            form_input($this->get_field_name('start',  $group), $current['start'],  'style="width: 173px"')
+            .'<div class="subtext">'.lang('start_help').'</div>'
+        );
+
+        /*
+         * Direction Navigation
+         */
+        $this->EE->table->add_row(
+            lang('direction_nav'),
+            $this->boolean_field($this->get_field_name('direction_nav',  $group), $current['direction_nav'])
+            .'<div class="subtext">'.lang('direction_nav_help').'</div>'
+        );
+
+        /*
+         * Control Navigation
+         */
+        $this->EE->table->add_row(
+            lang('control_nav'),
+            $this->boolean_field($this->get_field_name('control_nav',  $group), $current['control_nav'])
+            .'<div class="subtext">'.lang('control_nav_help').'</div>'
+        );
+
+        /*
+         * Pause on Hover
+         */
+        $this->EE->table->add_row(
+            lang('pause_on_hover'),
+            $this->boolean_field($this->get_field_name('pause_on_hover',  $group), $current['pause_on_hover'])
+        );
+
+        /*
+         * Manual Transitions
+         */
+        $this->EE->table->add_row(
+            lang('manual'),
+            $this->boolean_field($this->get_field_name('manual',  $group), $current['manual'])
+            .'<div class="subtext">'.lang('manual_help').'</div>'
+        );
+
+        /*
+         * Thumbnail Navigation
+         */
+        $this->EE->table->add_row(
+            lang('thumbnail_nav'),
+            $this->boolean_field($this->get_field_name('thumbnail_nav',  $group), $current['thumbnail_nav'])
+        );
+
+        /*
+         * Thumbnail Size
+         */
+        $this->EE->table->add_row(
+            array(
+                'data'           => lang('thumbnail_size'),
+                'data-condition' => $this->get_field_name('thumbnail_nav',  $group).'=y'
+            ),
+            form_input($this->get_field_name('thumbnail_size[width]',  $group), $current['thumbnail_size']['width'],  'style="width: 80px"').NBS.'&times;'.NBS.
+            form_input($this->get_field_name('thumbnail_size[height]', $group), $current['thumbnail_size']['height'], 'style="width: 80px"')
+            .'<div class="subtext">'.lang('thumbnail_size_help').'</div>'
         );
     }
 

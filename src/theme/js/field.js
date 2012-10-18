@@ -83,7 +83,7 @@
       });
     };
     update_field_names();
-    return $('.js-nivo-field-label').on('click', function(e) {
+    $('.js-nivo-field-label').on('click', function(e) {
       var $img, $label;
       $label = $(this);
       $img = $('img', $label);
@@ -94,6 +94,27 @@
         $img.attr('src', $img.attr('src').replace('field_expand', 'field_collapse'));
         return $label.next('.js-nivo-field-pane').slideUp();
       }
+    });
+    return $('[data-condition]').each(function(i) {
+      var $target, $td, $tr, re, target, val, _ref;
+      $td = $(this);
+      $tr = $td.closest('tr');
+      _ref = $td.data('condition').split('='), target = _ref[0], val = _ref[1];
+      $target = $("[name='" + target + "']");
+      re = new RegExp("^" + val);
+      $target.on("change.id_" + i, function(e) {
+        if ($target.is('select')) {
+          val = $target.val();
+        } else if ($target.attr('type') === 'radio') {
+          val = $target.filter(':checked').val();
+        }
+        if (re.test(val)) {
+          return $tr.show();
+        } else {
+          return $tr.hide();
+        }
+      });
+      return $target.trigger("change.id_" + i);
     });
   });
 

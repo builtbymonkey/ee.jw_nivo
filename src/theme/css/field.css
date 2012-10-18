@@ -3,13 +3,23 @@
     margin: 0.75em 0;
 }
 
-/* Override EE style */
-table.nivo-table tr.odd td {
-    background-color: #ebf0f2;
+.nivo-field-pane .subtext {
+    color: #859199;
+    margin-top: 5px;
 }
 
-table.nivo-table tr:nth-child(odd) td {
-    background-color: #f4f6f6;
+.nivo-field-pane label {
+    display: inline;
+    font-weight: bold !important;
+}
+
+/* Override EE style */
+.nivo-table .odd td {
+    background-color: #ebf0f2 !important;
+}
+
+.nivo-table :nth-child(odd) td {
+    background-color: #f4f6f6 !important;
 }
 
 .nivo-table th {
