@@ -21,9 +21,12 @@ class Jw_nivo_ft extends EE_Fieldtype {
         'version' => JW_NIVO_VERSION
     );
 
-
-    private $_themes = null;
-    private $_theme_url = null;
+    private $_cache = array(
+        'themes'        => null,
+        'theme_url'     => null,
+        'assets_loaded' => false,
+        'loaded_themes' => array('_none') // Never load '_none' theme
+    );
 
     private $_defaults = array(
         'theme'          => 'default',
@@ -71,9 +74,13 @@ class Jw_nivo_ft extends EE_Fieldtype {
     {
         parent::__construct();
 
-        $this->_slider_path = PATH_THEMES.'third_party/jw_nivo/nivo-slider/';
-
         $this->EE->lang->loadfile('jw_nivo');
+
+        // Initialize cache
+        if (!isset($this->EE->session->cache[JW_NIVO_NAME])) {
+            $this->EE->session->cache[JW_NIVO_NAME] = $this->_cache;
+        }
+        $this->cache =& $this->EE->session->cache[JW_NIVO_NAME];
     }
 
 
@@ -98,6 +105,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         $data = unserialize(base64_decode($data));
 
+        // Prep images
         foreach ($data['slides'] as $i => $slide) {
             // Do images need to be resized
             if ($data['settings']['sizing'] === 'fixed') {
@@ -134,14 +142,19 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function replace_tag($data, $params=array(), $tagdata=FALSE)
     {
-        $data['entry_id']       = $this->EE->extensions->last_call[0]['entry_id'];
+        $data['entry_id'] = $this->EE->extensions->last_call[0]['entry_id'];
+        $data['assets']   = array();
+        $theme            = $data['settings']['theme'];
 
-        $data['assets']   = array(
-            '<link rel="stylesheet" href="'.$this->_theme_url().'nivo-slider/nivo-slider.css?'.JW_NIVO_VERSION.'">',
-            '<script>window.jQuery || document.write(\'<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"><\/script>\')</script>',
-            '<script src="'.$this->_theme_url().'nivo-slider/jquery.nivo.slider.min.js?'.JW_NIVO_VERSION.'"></script>'
-        );
-        if (($theme = $data['settings']['theme']) !== '_none') {
+        // Only load core assets onces
+        if (!$this->cache['assets_loaded']) {
+            $this->cache['assets_loaded'] = true;
+
+            $data['assets'][] = '<link rel="stylesheet" href="'.$this->_theme_url().'nivo-slider/nivo-slider.css?'.JW_NIVO_VERSION.'">';
+            $data['assets'][] = '<script>window.jQuery || document.write(\'<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"><\/script>\')</script>';
+            $data['assets'][] = '<script src="'.$this->_theme_url().'nivo-slider/jquery.nivo.slider.min.js?'.JW_NIVO_VERSION.'"></script>';
+        }
+        if (!in_array($theme, $this->cache['loaded_themes'])) {
             $data['assets'][] = '<link rel="stylesheet" href="'.$this->_theme_url().'nivo-slider/themes/'.$theme.'/'.$theme.'.css?'.JW_NIVO_VERSION.'">';
         }
 
@@ -366,21 +379,21 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     private function get_installed_themes()
     {
-        if ($this->_themes !== null) {
-            return $this->_themes;
+        if ($this->cache['themes'] !== null) {
+            return $this->cache['themes'];
         }
 
-        $themes_path     = $this->_slider_path.'themes';
-        $contents        = array_diff(scandir($themes_path), array('..', '.')); // Strip self and parent
-        $this->_themes   = array('_none');
+        $themes_path           = PATH_THEMES.'third_party/jw_nivo/nivo-slider/themes';
+        $contents              = array_diff(scandir($themes_path), array('..', '.')); // Strip self and parent
+        $this->cache['themes'] = array('_none');
 
         foreach ($contents as $f) {
             if (is_dir($themes_path.'/'.$f)) {
-                $this->_themes[] = $f;
+                $this->cache['themes'][] = $f;
             }
         }
 
-        return $this->_themes;
+        return $this->cache['themes'];
     }
 
 
@@ -661,12 +674,12 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     private function _theme_url()
     {
-        if ($this->_theme_url === null){
+        if ($this->cache['theme_url'] === null){
             $theme_folder_url = defined('URL_THIRD_THEMES') ? URL_THIRD_THEMES : $this->EE->config->slash_item('theme_folder_url').'third_party/';
-            $this->_theme_url = $theme_folder_url.'jw_nivo/';
+            $this->cache['theme_url'] = $theme_folder_url.'jw_nivo/';
         }
 
-        return $this->_theme_url;
+        return $this->cache['theme_url'];
     }
 
     /**
