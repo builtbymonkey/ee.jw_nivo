@@ -188,7 +188,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         $channel_settings = unserialize(base64_decode($this->settings['field_settings']));
 
         // Merge entry settings with channel settings
-        if (!isset($vars['settings'])) {
+        if (!isset($vars['settings']) OR !is_array($vars['settings'])) {
             $vars['settings'] = array();
         }
         $vars['settings'] = array_merge($channel_settings, $vars['settings']);
