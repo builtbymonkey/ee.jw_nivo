@@ -142,11 +142,8 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function replace_tag($data, $params=array(), $tagdata=FALSE)
     {
-        $data['entry_id'] = $this->EE->extensions->last_call[0]['entry_id'];
-        $data['assets']   = array();
-        $theme            = $data['settings']['theme'];
-
-        // Only load core assets onces
+        // Only load core assets once per page
+        $data['assets'] = array();
         if (!$this->cache['assets_loaded']) {
             $this->cache['assets_loaded'] = true;
 
@@ -154,6 +151,9 @@ class Jw_nivo_ft extends EE_Fieldtype {
             $data['assets'][] = '<script>window.jQuery || document.write(\'<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"><\/script>\')</script>';
             $data['assets'][] = '<script src="'.$this->_theme_url().'nivo-slider/jquery.nivo.slider.min.js?'.JW_NIVO_VERSION.'"></script>';
         }
+
+        // Only load themes once as needed
+        $theme = $data['settings']['theme'];
         if (!in_array($theme, $this->cache['loaded_themes'])) {
             $data['assets'][] = '<link rel="stylesheet" href="'.$this->_theme_url().'nivo-slider/themes/'.$theme.'/'.$theme.'.css?'.JW_NIVO_VERSION.'">';
         }
@@ -245,17 +245,41 @@ class Jw_nivo_ft extends EE_Fieldtype {
     /**
      * Prepare for Saving the Field
      *
-     * This method prepares the data to be saved to the entries table in the
-     * database
+     * We need to push this data to the cache until we are sure we have an
+     * entry_id.
      *
      * @param  array  The data entered into this field
      * @return string The data to be stored in the database
      */
     public function save($data)
     {
-        $data = $this->get_post_data();
+        $this->cache['post_data'][$this->field_id] = $this->get_post_data();
 
-        return base64_encode(serialize($data));
+        return '';
+    }
+
+
+    /**
+     * Post Save
+     *
+     * This method prepares the data to be saved to the entries table in the
+     * database
+     *
+     * @param  array  The data entered into this field
+     * @return string The data to be stored in the database
+     */
+    public function post_save($data)
+    {
+        // Ignore if we can't find the cached post data
+        if (empty($this->cache['post_data'][$this->field_id])) return;
+
+        $data = $this->cache['post_data'][$this->field_id];
+        $data['entry_id'] = $this->settings['entry_id'];
+        $data = base64_encode(serialize($data));
+
+        $data = array('field_id_'.$this->field_id => $data);
+        $this->EE->db->where('entry_id', $this->settings['entry_id'])
+                     ->update('channel_data', $data);
     }
 
 
