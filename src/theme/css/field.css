@@ -63,6 +63,6 @@
     display: none !important;
 }
 
-.is-dragging td {
+.nivo-table .is-dragging td {
     background-color: #dde2e5 !important;
 }
