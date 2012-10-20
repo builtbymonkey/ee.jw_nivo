@@ -56,6 +56,8 @@ class Jw_nivo_ft extends EE_Fieldtype {
         // 'start'          => 0,
     );
 
+    private $_global_defaults = array(); // Filled in __construct
+
     private $sizing_options     = array('fixed', 'responsive');
     private $transition_options = array('random', 'fade', 'fold', 'sliceDown',
                                         'sliceDownLeft', 'sliceUp', 'sliceUpLeft',
@@ -75,6 +77,12 @@ class Jw_nivo_ft extends EE_Fieldtype {
         parent::__construct();
 
         $this->EE->lang->loadfile('jw_nivo');
+
+        // Setup module defaults as we can't run files outside of a method
+        $this->_global_defaults =  array(
+            'cache_path' => base_url().'nivo_cache/',
+            'cache_url'  => str_replace(SYSDIR.'/', '', FCPATH).'nivo_cache/'
+        );
 
         // Initialize cache
         if (!isset($this->EE->session->cache[JW_NIVO_NAME])) {
@@ -281,6 +289,65 @@ class Jw_nivo_ft extends EE_Fieldtype {
         $data = array('field_id_'.$this->field_id => $data);
         $this->EE->db->where('entry_id', $this->settings['entry_id'])
                      ->update('channel_data', $data);
+    }
+
+
+// ----------------------------------------------------------------------------- INSTALLATION
+
+
+    /**
+     * Install
+     *
+     * @return array The global settings values
+     */
+    public function install()
+    {
+        return $this->_global_defaults;
+    }
+
+
+// ----------------------------------------------------------------------------- MODULE SETTINGS
+
+
+    /**
+     * Display Global Settings
+     *
+     * @return string The form displayed on the global settings page
+     */
+    public function display_global_settings()
+    {
+        // Load the table lib
+        $this->EE->load->library('table');
+
+        // Use the default template known as $cp_pad_table_template in the views
+        $this->EE->table->set_template(array(
+            'table_open'      => '<table class="mainTable padTable" border="0" cellspacing="0" cellpadding="0">',
+            'row_start'       => '<tr class="even">',
+            'row_alt_start'   => '<tr class="odd">'
+        ));
+
+        $this->EE->table->set_heading(array('data' => lang('nivo_preferences'), 'style' => 'width: 40%'), '');
+
+        $this->EE->table->add_row(lang('cache_path'), form_input('cache_path', $this->settings['cache_path']));
+        $this->EE->table->add_row(lang('cache_url'),  form_input('cache_url',  $this->settings['cache_url']));
+
+        return $this->EE->table->generate();
+    }
+
+
+    /**
+     * Save Global Settings
+     *
+     * @return array The global settings values
+     */
+    function save_global_settings()
+    {
+        $settings = $this->_global_defaults;
+        foreach ($settings as $key => $val) {
+            if (isset($_POST[$key])) $settings[$key] = $_POST[$key];
+        }
+
+        return $settings;
     }
 
 

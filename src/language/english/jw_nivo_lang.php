@@ -61,6 +61,10 @@ $lang = array(
 'pause_on_hover'      => 'Pause the Slider on Hover',
 'manual'              => 'Manual Transitions',
 'manual_help'         => 'Slider is always paused',
+'cache_path'          => 'Path to image cache',
+'cache_url'           => 'URL to image cache',
+'cache_doesnt_exist'  => 'Cache path does not exist',
+'cache_not_writable'  => 'Cache path is not writable',
 
 
 // END
