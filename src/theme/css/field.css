@@ -31,16 +31,28 @@
     resize: none;
 }
 
-.nivo-button {
-    border: 1px solid;/* #d0d7df; */
-    border-radius: 50%;
-    display: inline-block;
-    line-height: 13px;
-    padding-top: 2px;
+.nivo-icon-cell {
     text-align: center;
-    text-decoration: none !important;
-    width: 15px;
 }
+
+.nivo-button {
+    background: url(../img/sprite.png) no-repeat;
+    display: inline-block;
+    height: 16px;
+    text-decoration: none !important;
+    vertical-align: middle;
+    width: 16px;
+
+    /* Kellum Image Replacement */
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.nivo-button-plus        { background-position:   0     0; }
+.nivo-add-link:hover .nivo-button-plus,
+.nivo-button-plus:hover  { background-position:   0   -16px; }
+.nivo-button-minus       { background-position: -16px   0; }
+.nivo-button-minus:hover { background-position: -16px -16px; }
 
 .nivo-add-link {
     text-decoration: none !important;

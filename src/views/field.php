@@ -15,30 +15,30 @@
             </td>
         </tr>
         <tr class="js-nivo-slide-template is-hidden">
-            <td class="js-reorder-handle nivo-handle">&#9776;</td>
+            <td class="js-reorder-handle nivo-handle nivo-icon-cell">&#9776;</td>
             <td><?= $this->file_field->field("slide_image_#") ?></td>
             <td><?= form_textarea("slide_caption_#") ?></td>
             <td><?= form_textarea("slide_link_#") ?></td>
             <td><?= form_textarea("slide_alt_text_#") ?></td>
-            <td><a href="#" class="js-nivo-remove-slide nivo-button">&minus;</a></td>
+            <td><a href="#" class="js-nivo-remove-slide nivo-button nivo-icon-cell">&minus;</a></td>
         </tr>
         <?php $j = 0 ?>
         <?php if (isset($slides)): ?>
         <?php foreach ($slides as $i => $slide): $j = $i + 1; ?>
         <tr class="js-nivo-slide">
-            <td class="js-reorder-handle nivo-handle">&#9776;</td>
+            <td class="js-reorder-handle nivo-handle nivo-icon-cell">&#9776;</td>
             <td><?= $this->file_field->field("slide_image_{$j}", $slide['image']) ?></td>
             <td><?= form_textarea("slide_caption_{$j}",          $slide['caption']) ?></td>
             <td><?= form_textarea("slide_link_{$j}",             $slide['link']) ?></td>
             <td><?= form_textarea("slide_alt_text_{$j}",         $slide['alt_text']) ?></td>
-            <td><a href="#" class="js-nivo-remove-slide nivo-button">&minus;</a></td>
+            <td class="nivo-icon-cell"><a href="#" class="js-nivo-remove-slide nivo-button nivo-button-minus">&minus;</a></td>
         </tr>
         <?php endforeach ?>
         <?php endif ?>
     </tbody>
 </table>
 <input type="hidden" name="slide_count" value="<?= $j ?>">
-<a href="#" class="js-nivo-add-slide nivo-add-link"><span class="nivo-button">+</span> &nbsp; <?= lang('add_slide') ?></a>
+<a href="#" class="js-nivo-add-slide nivo-add-link"><span class="nivo-button nivo-button-plus">+</span> &nbsp; <?= lang('add_slide') ?></a>
 
 <label class="js-nivo-field-label nivo-label hide-field">
     <span>
