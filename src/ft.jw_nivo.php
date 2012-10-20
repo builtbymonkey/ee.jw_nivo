@@ -78,11 +78,14 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         $this->EE->lang->loadfile('jw_nivo');
 
-        // Setup module defaults as we can't run files outside of a method
-        $this->_global_defaults =  array(
-            'cache_path' => base_url().'nivo_cache/',
-            'cache_url'  => str_replace(SYSDIR.'/', '', FCPATH).'nivo_cache/'
-        );
+        // base_url() is only available in the control panel (which is fine here)
+        if (REQ === 'CP') {
+            // Setup module defaults as we can't run files outside of a method
+            $this->_global_defaults =  array(
+                'cache_path' => base_url().'nivo_cache/',
+                'cache_url'  => str_replace(SYSDIR.'/', '', FCPATH).'nivo_cache/'
+            );
+        }
 
         // Initialize cache
         if (!isset($this->EE->session->cache[JW_NIVO_NAME])) {
@@ -115,23 +118,19 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         // Prep images
         foreach ($data['slides'] as $i => $slide) {
+            $image = $this->EE->file_field->parse_field($data['slides'][$i]['image']);
+
             // Do images need to be resized
-            if ($data['settings']['sizing'] === 'fixed') {
-                // TODO: Resize images
-                $data['slides'][$i]['image'] = $this->EE->file_field->parse_field($data['slides'][$i]['image']);
-            }
-            else {
-                $data['slides'][$i]['image'] = $this->EE->file_field->parse_field($data['slides'][$i]['image']);
-            }
+            $data['slides'][$i]['image'] =
+                ($data['settings']['sizing'] === 'fixed')
+                ? $this->resize_image($image, $data['settings']['size'])
+                : $image['url'];
 
             // Do we need to create thumbnails
-            if ($data['settings']['thumbnail_nav'] === 'y') {
-                // TODO: Create thumbnails
-                $data['slides'][$i]['thumb'] = $data['slides'][$i]['image']['url'];
-            }
-            else {
-                $data['slides'][$i]['thumb'] = '';
-            }
+            $data['slides'][$i]['thumb'] =
+                ($data['settings']['thumbnail_nav'] === 'y')
+                ? $this->resize_image($image, $data['settings']['thumbnail_size'])
+                : '';
         }
 
         return $data;
@@ -328,8 +327,16 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         $this->EE->table->set_heading(array('data' => lang('nivo_preferences'), 'style' => 'width: 40%'), '');
 
-        $this->EE->table->add_row(lang('cache_path'), form_input('cache_path', $this->settings['cache_path']));
-        $this->EE->table->add_row(lang('cache_url'),  form_input('cache_url',  $this->settings['cache_url']));
+        $this->EE->table->add_row(
+            lang('cache_path'),
+            form_input('cache_path', $this->settings['cache_path'])
+            .((!file_exists($this->settings['cache_path']))        ? '<div class="notice">'.lang('cache_doesnt_exist').'</div>' :
+             ((!is_really_writable($this->settings['cache_path'])) ? '<div class="notice">'.lang('cache_not_writable').'</div>' : ''))
+        );
+        $this->EE->table->add_row(
+            lang('cache_url'),
+            form_input('cache_url',  $this->settings['cache_url'])
+        );
 
         return $this->EE->table->generate();
     }
@@ -381,6 +388,39 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
 
 // ----------------------------------------------------------------------------- PRIVATE METHODS
+
+
+    /**
+     * Resize Image
+     *
+     * @param array Image details
+     * @param array Width, height
+     * @return URL to resized image
+     */
+    private function resize_image($image, $size)
+    {
+        extract($image);
+
+        $cache_name = md5($rel_path.$size['width'].$size['height'].$modified_date).'.'.$extension;
+        $cache_path = $this->settings['cache_path'].$cache_name;
+
+        if (!file_exists($cache_path)) {
+            $this->EE->load->library('image_lib');
+
+            $config['source_image']     = $rel_path;
+            $config['new_image']        = $cache_path;
+            $config['maintain_ratio']   = TRUE;
+            $config['image_library']    = $this->EE->config->item('image_resize_protocol');
+            $config['library_path']     = $this->EE->config->item('image_library_path');
+            $config['width']            = $size['width'];
+            $config['height']           = $size['height'];
+
+            $this->EE->image_lib->initialize($config);
+            $this->EE->image_lib->resize();
+        }
+
+        return $this->settings['cache_url'].$cache_name;
+    }
 
 
     /**
@@ -730,6 +770,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         return $settings;
     }
+
 
 // ----------------------------------------------------------------------------- ASSET LOADING
 

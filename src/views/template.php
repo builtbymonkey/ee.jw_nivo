@@ -13,25 +13,16 @@
         <div class="ribbon"></div>
         <div id="nivoslider-<?= $entry_id ?>" class="nivoSlider" <?= $sizing ?>>
 <?php   foreach ($slides as $j => $slide) {
+            extract($slide);
 
-            $link     = $slide['link'];
-            $source   = $slide['image']['url'];
-            $caption  = $slide['caption'];
-            $alt_text = $slide['alt_text'];
             $style    = ($j > 0) ? 'style="display:none"' : '';
-            $thumb    = ($settings['thumbnail_nav'] === 'y') ? "data-thumb=\"{$slide['thumb']}\"" : '';
+            $thumb    = ($settings['thumbnail_nav'] === 'y') ? "data-thumb=\"{$thumb}\"" : '';
             $title    = ($caption) ? "title=\"#nivoslider-{$entry_id}-caption-{$i}\"" : '';
             $i       += (!!$caption);
+            $img      = "\t\t<img src=\"{$image}\" {$thumb} {$title} alt=\"{$alt_text}\" {$style}>\n";
 
-            if ($caption) {
-                $captions[] = $caption;
-            }
-
-            $img      = "\t\t<img src=\"{$source}\" {$thumb} {$title} alt=\"{$alt_text}\" {$style}>\n";
-
-            if ($link) {
-                $img = "\t\t<a href=\"{$link}\">\n\t{$img}\t\t</a>\n";
-            }
+            if ($link)    $img        = "\t\t<a href=\"{$link}\">\n\t{$img}\t\t</a>\n";
+            if ($caption) $captions[] = $caption;
 
             echo $img;
         } ?>
