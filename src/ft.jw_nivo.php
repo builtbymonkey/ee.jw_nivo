@@ -82,8 +82,8 @@ class Jw_nivo_ft extends EE_Fieldtype {
         if (REQ === 'CP') {
             // Setup module defaults as we can't run files outside of a method
             $this->_global_defaults =  array(
-                'cache_path' => base_url().'nivo_cache/',
-                'cache_url'  => str_replace(SYSDIR.'/', '', FCPATH).'nivo_cache/'
+                'cache_path' => str_replace(SYSDIR.'/', '', FCPATH).'nivo_cache/',
+                'cache_url'  => base_url().'nivo_cache/'
             );
         }
 
