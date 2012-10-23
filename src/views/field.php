@@ -20,7 +20,7 @@
             <td><?= form_textarea("slide_caption_#") ?></td>
             <td><?= form_textarea("slide_link_#") ?></td>
             <td><?= form_textarea("slide_alt_text_#") ?></td>
-            <td><a href="#" class="js-nivo-remove-slide nivo-button nivo-icon-cell">&minus;</a></td>
+            <td class="nivo-icon-cell"><a href="#" class="js-nivo-remove-slide nivo-button nivo-button-minus">&minus;</a></td>
         </tr>
         <?php $j = 0 ?>
         <?php if (isset($slides)): ?>
