@@ -301,6 +301,11 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function install()
     {
+        // Attempt to create cache directory
+        if (!is_dir($this->_global_defaults['cache_path'])) {
+            mkdir($this->_global_defaults['cache_path'], DIR_WRITE_MODE);
+        }
+
         return $this->_global_defaults;
     }
 
