@@ -7,4 +7,4 @@ if (!defined('JW_NIVO_VERSION')) {
 
 $config['name'] = JW_NIVO_NAME;
 $config['version'] = JW_NIVO_VERSION;
-$config['nsm_addon_updater']['versions_xml'] = 'http://jeremyworboys.com/add-ons/feed/jw-nivo/';
+$config['nsm_addon_updater']['versions_xml'] = 'http://jeremyworboys.com/add-ons/releases/jw-nivo/';
