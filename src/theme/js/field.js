@@ -2,14 +2,23 @@
 (function() {
 
   $(function() {
-    var $nivo_empty, $nivo_field, $nivo_table, $nivo_templ, $slide_count, update_field_names;
+    var $nivo_empty, $nivo_field, $nivo_table, $nivo_templ, $slide_count, update_field_names, use_assets;
     $nivo_field = $('.js-nivo-table').closest('.holder');
     $nivo_table = $('.js-nivo-table tbody');
     $nivo_templ = $('.js-nivo-slide-template');
     $nivo_empty = $('.js-nivo-no-slides');
     $slide_count = $('[name=slide_count]');
+    use_assets = eval($('.js-nivo-table').data('assets'));
+    if (use_assets) {
+      $('.js-nivo-slide').each(function(i) {
+        var $assets_field;
+        console.log($(this));
+        $assets_field = $('.assets-field', $(this));
+        return new Assets.Field($assets_field, $assets_field.attr('id'), Assets.Field.matrixConfs['col_id_1']);
+      });
+    }
     $('.js-nivo-add-slide').on('click', function(e) {
-      var $file_field, $new_row, file_field, row_id;
+      var $assets_field, $file_field, $new_row, file_field, row_id;
       e.preventDefault();
       $nivo_empty.addClass('is-hidden');
       $new_row = $nivo_templ.clone().appendTo($nivo_table).removeClass('js-nivo-slide-template').addClass('js-nivo-slide');
@@ -20,33 +29,39 @@
         $field = $(this);
         return $field.attr('name', $field.attr('name').replace('#', row_id));
       });
-      file_field = "slide_image_" + row_id;
-      $file_field = $(file_field);
-      $.ee_filebrowser.add_trigger($('.choose_file', $new_row), file_field, {
-        content_type: $file_field.data('content-type'),
-        directory: $file_field.data('directory')
-      }, function(file, field) {
-        var $field_dir, $field_file, $thumb, directory, name, thumb;
-        directory = file.upload_location_id;
-        name = file.file_name;
-        thumb = file.thumb;
-        $thumb = $('.file_set', $new_row);
-        $field_dir = $("[name=" + file_field + "_hidden_dir]");
-        $field_file = $("[name=" + file_field + "_hidden]");
-        if (!(directory && name)) {
-          return;
-        }
-        $field_dir.val(directory);
-        $field_file.val(name);
-        $('.remove_file', $new_row).on('click', function(e) {
-          $thumb.addClass('js_hide');
-          $field_dir.val('');
-          return $field_file.val('');
-        });
-        $('img', $thumb).attr('src', thumb);
-        return $thumb.removeClass('js_hide');
-      });
       $new_row.removeClass('is-hidden');
+      if (use_assets) {
+        $assets_field = $('.assets-field', $new_row);
+        $assets_field.attr('id', 'slide_image_' + row_id);
+        new Assets.Field($assets_field, $assets_field.attr('id'), Assets.Field.matrixConfs['col_id_1']);
+      } else {
+        file_field = "slide_image_" + row_id;
+        $file_field = $(file_field);
+        $.ee_filebrowser.add_trigger($('.choose_file', $new_row), file_field, {
+          content_type: $file_field.data('content-type'),
+          directory: $file_field.data('directory')
+        }, function(file, field) {
+          var $field_dir, $field_file, $thumb, directory, name, thumb;
+          directory = file.upload_location_id;
+          name = file.file_name;
+          thumb = file.thumb;
+          $thumb = $('.file_set', $new_row);
+          $field_dir = $("[name=" + file_field + "_hidden_dir]");
+          $field_file = $("[name=" + file_field + "_hidden]");
+          if (!(directory && name)) {
+            return;
+          }
+          $field_dir.val(directory);
+          $field_file.val(name);
+          $('.remove_file', $new_row).on('click', function(e) {
+            $thumb.addClass('js_hide');
+            $field_dir.val('');
+            return $field_file.val('');
+          });
+          $('img', $thumb).attr('src', thumb);
+          return $thumb.removeClass('js_hide');
+        });
+      }
       return false;
     });
     $nivo_table.on('click', '.js-nivo-remove-slide', function(e) {
@@ -76,12 +91,16 @@
       var count;
       count = 0;
       return $('.js-nivo-slide', $nivo_table).each(function(i) {
-        $(this).data('index', i + 1);
-        return $('[name]', $(this)).each(function(j) {
+        var $slide, row_id;
+        $slide = $(this);
+        row_id = i + 1;
+        $slide.data('index', row_id);
+        $('[name]', $slide).each(function(j) {
           var $field;
           $field = $(this);
-          return $field.attr('name', $field.attr('name').replace(/\d+/, i + 1));
+          return $field.attr('name', $field.attr('name').replace(/\d+/, row_id));
         });
+        return $('.assets-field', $slide).attr('id', 'slide_image_' + row_id);
       });
     };
     update_field_names();

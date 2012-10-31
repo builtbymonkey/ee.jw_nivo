@@ -65,6 +65,7 @@ $lang = array(
 'cache_url'           => 'URL to image cache',
 'cache_doesnt_exist'  => 'Cache path does not exist',
 'cache_not_writable'  => 'Cache path is not writable',
+'use_assets'          => 'Use Assets for images',
 
 
 // END

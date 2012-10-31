@@ -78,20 +78,24 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         $this->EE->lang->loadfile('jw_nivo');
 
-        // base_url() is only available in the control panel (which is fine here)
-        if (REQ === 'CP') {
-            // Setup module defaults as we can't run files outside of a method
-            $this->_global_defaults =  array(
-                'cache_path' => str_replace(SYSDIR.'/', '', FCPATH).'nivo_cache/',
-                'cache_url'  => base_url().'nivo_cache/'
-            );
-        }
-
         // Initialize cache
         if (!isset($this->EE->session->cache[JW_NIVO_NAME])) {
             $this->EE->session->cache[JW_NIVO_NAME] = $this->_cache;
         }
         $this->cache =& $this->EE->session->cache[JW_NIVO_NAME];
+
+        // Check if Assets is installed
+        $this->cache['has_assets'] = array_key_exists('assets', $this->EE->addons->get_installed());
+
+        // base_url() is only available in the control panel (which is fine here)
+        if (REQ === 'CP') {
+            // Setup module defaults as we can't run files outside of a method
+            $this->_global_defaults =  array(
+                'cache_path' => str_replace(SYSDIR.'/', '', FCPATH).'nivo_cache/',
+                'cache_url'  => base_url().'nivo_cache/',
+                'use_assets' => $this->cache['has_assets'] ? 'y' : 'n'
+            );
+        }
     }
 
 
@@ -182,19 +186,29 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function display_field($data)
     {
-        // Load the table and file_field libs
+        // Load libraries
         $this->EE->load->library('table');
-        $this->EE->load->library('file_field');
+
+        if ($this->settings['use_assets'] === 'y') {
+            require_once PATH_THIRD.'assets/helper.php';
+
+            $assets_helper = new Assets_helper;
+            $assets_helper->include_sheet_resources();
+            $assets_helper->include_js('matrix.js');
+        }
+        else {
+            $this->EE->load->library('file_field');
+
+            // Setup file_field
+            $this->EE->file_field->browser(array(
+                'publish' => true,
+                'settings' => '{"content_type": "image", "directory": "1"}', // TODO: Limit file dirs for native file fieldtype
+            ));
+        }
 
         // Include assets
         $this->_include_theme_js('jquery.tablednd.js', 'field.js');
         $this->_include_theme_css('field.css');
-
-        // Setup file_field
-        $this->EE->file_field->browser(array(
-            'publish' => true,
-            'settings' => '{"content_type": "image", "directory": "1"}',
-        ));
 
         // Get saved data
         if (!empty($data)) {
@@ -215,6 +229,17 @@ class Jw_nivo_ft extends EE_Fieldtype {
         // Build the settings table
         $this->prep_prefs_table($vars, 'settings');
         $vars['settings_html'] = $this->EE->table->generate();
+
+        // Check for Assets
+        $vars['use_assets'] = $this->settings['use_assets'] === 'y';
+        if ($this->settings['use_assets'] === 'y') {
+            $this->EE->load->add_package_path(PATH_THIRD.'assets/');
+            $vars['assets_settings'] = array(
+                'filedirs' => 'all', // TODO: Limit file dirs for Assets fieldtype
+                'multi'    => 'n',
+                'view'     => 'thumbs'
+            );
+        }
 
         return $this->EE->load->view('field', $vars, true);
     }
@@ -341,6 +366,10 @@ class Jw_nivo_ft extends EE_Fieldtype {
             lang('cache_url'),
             form_input('cache_url',  $this->settings['cache_url'])
         );
+        $this->EE->table->add_row(
+            lang('use_assets'),
+            $this->boolean_field('use_assets', $this->settings['use_assets'])
+        );
 
         return $this->EE->table->generate();
     }
@@ -441,14 +470,23 @@ class Jw_nivo_ft extends EE_Fieldtype {
         $count = intval($this->EE->input->post('slide_count')) + 1;
         for ($i=1; $i < $count; $i++) {
             $slide = array();
-            $image_file        = $this->EE->input->post('slide_image_'.$i.'_hidden');
-            $image_dir         = $this->EE->input->post('slide_image_'.$i.'_hidden_dir');
-            $slide['image']    = $this->EE->file_field->format_data($image_file, $image_dir);
-            $slide['caption']  = $this->EE->input->post('slide_caption_'.$i);
-            $slide['link']     = $this->EE->input->post('slide_link_'.$i);
-            $slide['alt_text'] = $this->EE->input->post('slide_alt_text_'.$i);
+            if ($this->settings['use_assets'] === 'y') {
+                foreach ($this->EE->input->post('slide_image_'.$i) as $image) {
+                    if (!empty($image)) {
+                        $slide['image'] = $image;
+                    }
+                }
+            }
+            else {
+                $image_file     = $this->EE->input->post('slide_image_'.$i.'_hidden');
+                $image_dir      = $this->EE->input->post('slide_image_'.$i.'_hidden_dir');
+                $slide['image'] = $this->EE->file_field->format_data($image_file, $image_dir);
+            }
+            $slide['caption']   = $this->EE->input->post('slide_caption_'.$i);
+            $slide['link']      = $this->EE->input->post('slide_link_'.$i);
+            $slide['alt_text']  = $this->EE->input->post('slide_alt_text_'.$i);
 
-            $data['slides'][] = $slide;
+            $data['slides'][]   = $slide;
         }
 
         $data['settings'] = $this->EE->input->post('settings');
