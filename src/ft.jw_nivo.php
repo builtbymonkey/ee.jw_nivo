@@ -76,6 +76,11 @@ class Jw_nivo_ft extends EE_Fieldtype {
     {
         parent::__construct();
 
+        // Fill dependencies for older versions of PHP
+        if (version_compare(PHP_VERSION, '5.2.0', '<')) {
+            $this->EE->load->helper('json');
+        }
+
         $this->EE->lang->loadfile('jw_nivo');
 
         // Initialize cache
