@@ -27,7 +27,7 @@
                 echo $field->display_field(false);
             ?>
             <?php else: ?>
-                <?= $this->file_field->field("slide_image_#", $slide['image']) ?>
+                <?= $this->file_field->field("slide_image_#") ?>
             <?php endif; ?>
             </td>
             <td><?= form_textarea("slide_caption_#") ?></td>
