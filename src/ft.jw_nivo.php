@@ -89,11 +89,11 @@ class Jw_nivo_ft extends EE_Fieldtype {
         }
         $this->cache =& $this->EE->session->cache[JW_NIVO_NAME];
 
-        // Check if Assets is installed
-        $this->cache['has_assets'] = array_key_exists('assets', $this->EE->addons->get_installed());
-
         // base_url() is only available in the control panel (which is fine here)
         if (REQ === 'CP') {
+            // Check if Assets is installed
+            $this->cache['has_assets'] = array_key_exists('assets', $this->EE->addons->get_installed());
+
             // Setup module defaults as we can't run files outside of a method
             $this->_global_defaults =  array(
                 'cache_path' => str_replace(SYSDIR.'/', '', FCPATH).'nivo_cache/',
