@@ -27,7 +27,7 @@
                 echo $field->display_field(false);
             ?>
             <?php else: ?>
-                <?= $this->file_field->field("slide_image_#") ?>
+                <?= $this->file_field->field("slide_image_#", '', 'all', 'image') ?>
             <?php endif; ?>
             </td>
             <td><?= form_textarea("slide_caption_#") ?></td>
@@ -51,7 +51,7 @@
                 echo $field->display_field(array($slide['image']));
             ?>
             <?php else: ?>
-                <?= $this->file_field->field("slide_image_{$j}", $slide['image']) ?>
+                <?= $this->file_field->field("slide_image_{$j}", $slide['image'], 'all', 'image') ?>
             <?php endif; ?>
             </td>
             <td><?= form_textarea("slide_caption_{$j}",          $slide['caption']) ?></td>

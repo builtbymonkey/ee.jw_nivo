@@ -207,7 +207,10 @@ class Jw_nivo_ft extends EE_Fieldtype {
             // Setup file_field
             $this->EE->file_field->browser(array(
                 'publish' => true,
-                'settings' => '{"content_type": "image", "directory": "1"}', // TODO: Limit file dirs for native file fieldtype
+                'settings' => json_encode(array(
+                    'content-type' => 'image',
+                    'directory' => 'all'
+                ))
             ));
         }
 
