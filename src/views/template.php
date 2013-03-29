@@ -42,7 +42,7 @@
 <?php foreach ($assets as $asset) { echo $asset."\n"; } ?>
 <script type="text/javascript">
 <?php if (count($slides) > 1): ?>
-    jQuery(window).load(function(){
+    $(function(){
         jQuery("#nivoslider-<?= $entry_id ?>").nivoSlider({
             effect:           "<?= $settings['transition'] ?>",
             slices:           <?= $settings['slices'] ?>,

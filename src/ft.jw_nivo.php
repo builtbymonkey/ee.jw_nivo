@@ -163,9 +163,13 @@ class Jw_nivo_ft extends EE_Fieldtype {
         if (!$this->cache['assets_loaded']) {
             $this->cache['assets_loaded'] = true;
 
-            $data['assets'][] = '<link rel="stylesheet" href="'.$this->_theme_url().'nivo-slider/nivo-slider.css?'.JW_NIVO_VERSION.'">';
-            $data['assets'][] = '<script>window.jQuery || document.write(\'<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"><\/script>\')</script>';
-            $data['assets'][] = '<script src="'.$this->_theme_url().'nivo-slider/jquery.nivo.slider.min.js?'.JW_NIVO_VERSION.'"></script>';
+            $data['assets'][] = '<link rel="stylesheet" href="'.$this->_theme_url().'nivo-slider/nivo-slider.css?v='.JW_NIVO_VERSION.'">';
+
+            if (!(isset($params['require_jquery']) && preg_match("/^(no|off)$/i", $params['require_jquery']))) {
+                $data['assets'][] = '<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
+            }
+
+            $data['assets'][] = '<script src="'.$this->_theme_url().'nivo-slider/jquery.nivo.slider.min.js?v='.JW_NIVO_VERSION.'"></script>';
         }
 
         // Only load themes once as needed
