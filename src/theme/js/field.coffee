@@ -13,7 +13,6 @@ $ ->
     #
     if use_assets
         $('.js-nivo-slide').each (i) ->
-            console.log $(this)
             $assets_field = $('.assets-field', $(this))
             new Assets.Field($assets_field, $assets_field.attr('id'), Assets.Field.matrixConfs['col_id_1'])
 

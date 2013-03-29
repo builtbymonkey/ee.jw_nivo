@@ -12,7 +12,6 @@
     if (use_assets) {
       $('.js-nivo-slide').each(function(i) {
         var $assets_field;
-        console.log($(this));
         $assets_field = $('.assets-field', $(this));
         return new Assets.Field($assets_field, $assets_field.attr('id'), Assets.Field.matrixConfs['col_id_1']);
       });
