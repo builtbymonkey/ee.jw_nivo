@@ -164,7 +164,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
             $this->cache['assets_loaded'] = true;
 
             $data['assets'][] = '<link rel="stylesheet" href="'.$this->_theme_url().'nivo-slider/nivo-slider.css?'.JW_NIVO_VERSION.'">';
-            $data['assets'][] = '<script>window.jQuery || document.write(\'<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"><\/script>\')</script>';
+            $data['assets'][] = '<script>window.jQuery || document.write(\'<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"><\/script>\')</script>';
             $data['assets'][] = '<script src="'.$this->_theme_url().'nivo-slider/jquery.nivo.slider.min.js?'.JW_NIVO_VERSION.'"></script>';
         }
 
