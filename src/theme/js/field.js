@@ -34,7 +34,7 @@
         $assets_field.attr('id', 'slide_image_' + row_id);
         new Assets.Field($assets_field, $assets_field.attr('id'), Assets.Field.matrixConfs['col_id_1']);
       } else {
-        file_field = "slide_image_" + row_id;
+        file_field = "[name=slide_image_" + row_id + "]";
         $file_field = $(file_field);
         $.ee_filebrowser.add_trigger($('.choose_file', $new_row), file_field, {
           content_type: $file_field.data('content-type'),
