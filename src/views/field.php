@@ -1,5 +1,5 @@
 
-<table class="mainTable padTable js-nivo-table nivo-table" border="0" cellspacing="0" cellpadding="0" data-assets="<?= json_encode($use_assets) ?>">
+<table class="mainTable padTable js-nivo-table nivo-table" border="0" cellspacing="0" cellpadding="0" data-assets="<?= $use_assets ? 'true' : 'false' ?>">
     <thead>
         <th style="width:  3%"></th>
         <th style="width: 13%"><em class="required">* </em><?= lang('image') ?></th>

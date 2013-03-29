@@ -5,7 +5,7 @@ $ ->
     $nivo_templ  = $('.js-nivo-slide-template')
     $nivo_empty  = $('.js-nivo-no-slides')
     $slide_count = $('[name=slide_count]')
-    use_assets   = eval $('.js-nivo-table').data('assets')
+    use_assets   = $('.js-nivo-table').data('assets')
 
 
     #
