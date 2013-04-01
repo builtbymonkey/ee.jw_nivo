@@ -45,8 +45,8 @@
           name = file.file_name;
           thumb = file.thumb;
           $thumb = $('.file_set', $new_row);
-          $field_dir = $("[name=" + file_field + "_hidden_dir]");
-          $field_file = $("[name=" + file_field + "_hidden]");
+          $field_dir = $("[name=slide_image_" + row_id + "_hidden_dir]");
+          $field_file = $("[name=slide_image_" + row_id + "_hidden]");
           if (!(directory && name)) {
             return;
           }
