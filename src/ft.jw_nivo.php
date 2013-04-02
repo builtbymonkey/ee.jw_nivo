@@ -96,7 +96,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
             // Setup module defaults as we can't run files outside of a method
             $this->_global_defaults =  array(
-                'cache_path' => APPPATH.'cache/nivo_cache/',
+                'cache_path' => str_replace(SYSDIR.'/', '', FCPATH).'nivo_cache/',
                 'cache_url'  => base_url().'nivo_cache/',
                 'use_assets' => $this->cache['has_assets'] ? 'y' : 'n'
             );
