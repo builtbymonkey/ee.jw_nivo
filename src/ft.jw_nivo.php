@@ -78,21 +78,21 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         // Fill dependencies for older versions of PHP
         if (version_compare(PHP_VERSION, '5.2.0', '<')) {
-            $this->EE->load->helper('json');
+            ee()->load->helper('json');
         }
 
-        $this->EE->lang->loadfile('jw_nivo');
+        ee()->lang->loadfile('jw_nivo');
 
         // Initialize cache
-        if (!isset($this->EE->session->cache[JW_NIVO_NAME])) {
-            $this->EE->session->cache[JW_NIVO_NAME] = $this->_cache;
+        if (!isset(ee()->session->cache[JW_NIVO_NAME])) {
+            ee()->session->cache[JW_NIVO_NAME] = $this->_cache;
         }
-        $this->cache =& $this->EE->session->cache[JW_NIVO_NAME];
+        $this->cache =& ee()->session->cache[JW_NIVO_NAME];
 
         // base_url() is only available in the control panel (which is fine here)
         if (REQ === 'CP') {
             // Check if Assets is installed
-            $this->cache['has_assets'] = array_key_exists('assets', $this->EE->addons->get_installed());
+            $this->cache['has_assets'] = array_key_exists('assets', ee()->addons->get_installed());
 
             // Setup module defaults as we can't run files outside of a method
             $this->_global_defaults =  array(
@@ -121,13 +121,13 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function pre_process($data)
     {
-        $this->EE->load->library('file_field');
+        ee()->load->library('file_field');
 
         $data = unserialize(base64_decode($data));
 
         // Prep images
         foreach ($data['slides'] as $i => $slide) {
-            $image = $this->EE->file_field->parse_field($data['slides'][$i]['image']);
+            $image = ee()->file_field->parse_field($data['slides'][$i]['image']);
 
             // Do images need to be resized
             $data['slides'][$i]['image'] =
@@ -178,7 +178,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
             $data['assets'][] = '<link rel="stylesheet" href="'.$this->_theme_url().'nivo-slider/themes/'.$theme.'/'.$theme.'.css?'.JW_NIVO_VERSION.'">';
         }
 
-        return $this->EE->load->view('template', $data, true);
+        return ee()->load->view('template', $data, true);
     }
 
 
@@ -196,7 +196,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     public function display_field($data)
     {
         // Load libraries
-        $this->EE->load->library('table');
+        ee()->load->library('table');
 
         if ($this->settings['use_assets'] === 'y') {
             require_once PATH_THIRD.'assets/helper.php';
@@ -206,10 +206,10 @@ class Jw_nivo_ft extends EE_Fieldtype {
             $assets_helper->include_js('matrix.js');
         }
         else {
-            $this->EE->load->library('file_field');
+            ee()->load->library('file_field');
 
             // Setup file_field
-            $this->EE->file_field->browser(array(
+            ee()->file_field->browser(array(
                 'publish' => true,
                 'settings' => json_encode(array(
                     'content-type' => 'image',
@@ -240,12 +240,12 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         // Build the settings table
         $this->prep_prefs_table($vars, 'settings');
-        $vars['settings_html'] = $this->EE->table->generate();
+        $vars['settings_html'] = ee()->table->generate();
 
         // Check for Assets
         $vars['use_assets'] = $this->settings['use_assets'] === 'y';
         if ($this->settings['use_assets'] === 'y') {
-            $this->EE->load->add_package_path(PATH_THIRD.'assets/');
+            ee()->load->add_package_path(PATH_THIRD.'assets/');
             $vars['assets_settings'] = array(
                 'filedirs' => 'all', // TODO: Limit file dirs for Assets fieldtype
                 'multi'    => 'n',
@@ -253,7 +253,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
             );
         }
 
-        return $this->EE->load->view('field', $vars, true);
+        return ee()->load->view('field', $vars, true);
     }
 
 
@@ -322,7 +322,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         $data = base64_encode(serialize($data));
 
         $data = array('field_id_'.$this->field_id => $data);
-        $this->EE->db->where('entry_id', $this->settings['entry_id'])
+        ee()->db->where('entry_id', $this->settings['entry_id'])
                      ->update('channel_data', $data);
     }
 
@@ -357,33 +357,33 @@ class Jw_nivo_ft extends EE_Fieldtype {
     public function display_global_settings()
     {
         // Load the table lib
-        $this->EE->load->library('table');
+        ee()->load->library('table');
 
         // Use the default template known as $cp_pad_table_template in the views
-        $this->EE->table->set_template(array(
+        ee()->table->set_template(array(
             'table_open'      => '<table class="mainTable padTable" border="0" cellspacing="0" cellpadding="0">',
             'row_start'       => '<tr class="even">',
             'row_alt_start'   => '<tr class="odd">'
         ));
 
-        $this->EE->table->set_heading(array('data' => lang('nivo_preferences'), 'style' => 'width: 40%'), '');
+        ee()->table->set_heading(array('data' => lang('nivo_preferences'), 'style' => 'width: 40%'), '');
 
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('cache_path'),
             form_input('cache_path', $this->settings['cache_path'])
             .((!file_exists($this->settings['cache_path']))        ? '<div class="notice">'.lang('cache_doesnt_exist').'</div>' :
              ((!is_really_writable($this->settings['cache_path'])) ? '<div class="notice">'.lang('cache_not_writable').'</div>' : ''))
         );
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('cache_url'),
             form_input('cache_url',  $this->settings['cache_url'])
         );
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('use_assets'),
             $this->boolean_field('use_assets', $this->settings['use_assets'])
         );
 
-        return $this->EE->table->generate();
+        return ee()->table->generate();
     }
 
 
@@ -417,7 +417,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         $this->prep_prefs_table(array('nivo_settings' => $data), 'nivo_settings');
 
-        return $this->EE->table->generate();
+        return ee()->table->generate();
     }
 
 
@@ -428,7 +428,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     function save_settings($data)
     {
-        return $this->prep_settings($this->EE->input->post('nivo_settings'));
+        return $this->prep_settings(ee()->input->post('nivo_settings'));
     }
 
 
@@ -450,18 +450,18 @@ class Jw_nivo_ft extends EE_Fieldtype {
         $cache_path = $this->settings['cache_path'].$cache_name;
 
         if (!file_exists($cache_path)) {
-            $this->EE->load->library('image_lib');
+            ee()->load->library('image_lib');
 
             $config['source_image']     = $rel_path;
             $config['new_image']        = $cache_path;
             $config['maintain_ratio']   = TRUE;
-            $config['image_library']    = $this->EE->config->item('image_resize_protocol');
-            $config['library_path']     = $this->EE->config->item('image_library_path');
+            $config['image_library']    = ee()->config->item('image_resize_protocol');
+            $config['library_path']     = ee()->config->item('image_library_path');
             $config['width']            = $size['width'];
             $config['height']           = $size['height'];
 
-            $this->EE->image_lib->initialize($config);
-            $this->EE->image_lib->resize();
+            ee()->image_lib->initialize($config);
+            ee()->image_lib->resize();
         }
 
         return $this->settings['cache_url'].$cache_name;
@@ -473,35 +473,35 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     private function get_post_data()
     {
-        $this->EE->load->library('file_field');
+        ee()->load->library('file_field');
 
         $data = array();
 
         // Combine slides into an array
         $data['slides'] = array();
-        $count = intval($this->EE->input->post('slide_count')) + 1;
+        $count = intval(ee()->input->post('slide_count')) + 1;
         for ($i=1; $i < $count; $i++) {
             $slide = array();
             if ($this->settings['use_assets'] === 'y') {
-                foreach ($this->EE->input->post('slide_image_'.$i) as $image) {
+                foreach (ee()->input->post('slide_image_'.$i) as $image) {
                     if (!empty($image)) {
                         $slide['image'] = $image;
                     }
                 }
             }
             else {
-                $image_file     = $this->EE->input->post('slide_image_'.$i.'_hidden');
-                $image_dir      = $this->EE->input->post('slide_image_'.$i.'_hidden_dir');
-                $slide['image'] = $this->EE->file_field->format_data($image_file, $image_dir);
+                $image_file     = ee()->input->post('slide_image_'.$i.'_hidden');
+                $image_dir      = ee()->input->post('slide_image_'.$i.'_hidden_dir');
+                $slide['image'] = ee()->file_field->format_data($image_file, $image_dir);
             }
-            $slide['caption']   = $this->EE->input->post('slide_caption_'.$i);
-            $slide['link']      = $this->EE->input->post('slide_link_'.$i);
-            $slide['alt_text']  = $this->EE->input->post('slide_alt_text_'.$i);
+            $slide['caption']   = ee()->input->post('slide_caption_'.$i);
+            $slide['link']      = ee()->input->post('slide_link_'.$i);
+            $slide['alt_text']  = ee()->input->post('slide_alt_text_'.$i);
 
             $data['slides'][]   = $slide;
         }
 
-        $data['settings'] = $this->EE->input->post('settings');
+        $data['settings'] = ee()->input->post('settings');
 
         return $data;
     }
@@ -616,7 +616,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     private function prep_prefs_table($current, $group=null)
     {
         // Load the table lib
-        $this->EE->load->library('table');
+        ee()->load->library('table');
 
         // Extend defaults taking $group into consideration
         if (!is_array($current)) {
@@ -636,18 +636,18 @@ class Jw_nivo_ft extends EE_Fieldtype {
         }
 
         // Use the default template known as $cp_pad_table_template in the views
-        $this->EE->table->set_template(array(
+        ee()->table->set_template(array(
             'table_open'      => '<table class="mainTable padTable" border="0" cellspacing="0" cellpadding="0">',
             'row_start'       => '<tr class="even">',
             'row_alt_start'   => '<tr class="odd">'
         ));
 
-        $this->EE->table->set_heading(array('data' => lang('nivo_preferences'), 'style' => 'width: 40%'), '');
+        ee()->table->set_heading(array('data' => lang('nivo_preferences'), 'style' => 'width: 40%'), '');
 
         /*
          * Slider Theme
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('theme'),
             form_dropdown($this->get_field_name('theme', $group), $this->get_theme_options(), $current['theme'])
         );
@@ -655,7 +655,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Slider Sizing
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('sizing'),
             form_dropdown($this->get_field_name('sizing', $group), $this->format_options('sizing'), $current['sizing'])
             .'<div class="subtext">'.lang('sizing_help').'</div>'
@@ -664,7 +664,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Slider Size
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             array(
                 'data'           => lang('size'),
                 'data-condition' => $this->get_field_name('sizing',  $group).'=fixed'
@@ -677,7 +677,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Transition Effect
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('transition'),
             form_dropdown($this->get_field_name('transition', $group), $this->format_options('transition'), $current['transition'])
         );
@@ -685,7 +685,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Slices
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             array(
                 'data'           => lang('slices'),
                 'data-condition' => $this->get_field_name('transition',  $group).'=slice'
@@ -697,7 +697,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Box
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             array(
                 'data'           => lang('box'),
                 'data-condition' => $this->get_field_name('transition',  $group).'=box'
@@ -710,7 +710,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Animation Speed
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('speed'),
             form_input($this->get_field_name('speed',  $group), $current['speed'],  'style="width: 173px"')
             .'<div class="subtext">'.lang('speed_help').'</div>'
@@ -719,7 +719,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Pause Time
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('pause'),
             form_input($this->get_field_name('pause',  $group), $current['pause'],  'style="width: 173px"')
             .'<div class="subtext">'.lang('pause_help').'</div>'
@@ -728,7 +728,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Random Start
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('random_start'),
             $this->boolean_field($this->get_field_name('random_start',  $group), $current['random_start'])
         );
@@ -736,7 +736,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Start Slide
          */
-        // $this->EE->table->add_row(
+        // ee()->table->add_row(
         //     array(
         //         'data'           => lang('start'),
         //         'data-condition' => $this->get_field_name('random_start',  $group).'=n'
@@ -748,7 +748,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Direction Navigation
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('direction_nav'),
             $this->boolean_field($this->get_field_name('direction_nav',  $group), $current['direction_nav'])
             .'<div class="subtext">'.lang('direction_nav_help').'</div>'
@@ -757,7 +757,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Control Navigation
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('control_nav'),
             $this->boolean_field($this->get_field_name('control_nav',  $group), $current['control_nav'])
             .'<div class="subtext">'.lang('control_nav_help').'</div>'
@@ -766,7 +766,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Pause on Hover
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('pause_on_hover'),
             $this->boolean_field($this->get_field_name('pause_on_hover',  $group), $current['pause_on_hover'])
         );
@@ -774,7 +774,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Manual Transitions
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('manual'),
             $this->boolean_field($this->get_field_name('manual',  $group), $current['manual'])
             .'<div class="subtext">'.lang('manual_help').'</div>'
@@ -783,7 +783,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Thumbnail Navigation
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             lang('thumbnail_nav'),
             $this->boolean_field($this->get_field_name('thumbnail_nav',  $group), $current['thumbnail_nav'])
         );
@@ -791,7 +791,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         /*
          * Thumbnail Size
          */
-        $this->EE->table->add_row(
+        ee()->table->add_row(
             array(
                 'data'           => lang('thumbnail_size'),
                 'data-condition' => $this->get_field_name('thumbnail_nav',  $group).'=y'
@@ -835,7 +835,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     private function _theme_url()
     {
         if ($this->cache['theme_url'] === null){
-            $theme_folder_url = defined('URL_THIRD_THEMES') ? URL_THIRD_THEMES : $this->EE->config->slash_item('theme_folder_url').'third_party/';
+            $theme_folder_url = defined('URL_THIRD_THEMES') ? URL_THIRD_THEMES : ee()->config->slash_item('theme_folder_url').'third_party/';
             $this->cache['theme_url'] = $theme_folder_url.'jw_nivo/';
         }
 
@@ -848,7 +848,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     private function _include_theme_css()
     {
         foreach (func_get_args() as $file) {
-            $this->EE->cp->add_to_head('<link rel="stylesheet" href="'.$this->_theme_url().'css/'.$file.'?'.JW_NIVO_VERSION.'">');
+            ee()->cp->add_to_head('<link rel="stylesheet" href="'.$this->_theme_url().'css/'.$file.'?'.JW_NIVO_VERSION.'">');
         }
     }
 
@@ -858,7 +858,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     private function _include_theme_js()
     {
         foreach (func_get_args() as $file) {
-            $this->EE->cp->add_to_foot('<script src="'.$this->_theme_url().'js/'.$file.'?'.JW_NIVO_VERSION.'"></script>');
+            ee()->cp->add_to_foot('<script src="'.$this->_theme_url().'js/'.$file.'?'.JW_NIVO_VERSION.'"></script>');
         }
     }
 
