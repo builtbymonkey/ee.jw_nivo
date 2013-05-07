@@ -193,30 +193,6 @@ class Jw_nivo_ft extends EE_Fieldtype {
         // Load libraries
         ee()->load->library('table');
 
-        if ($this->settings['use_assets'] === 'y') {
-            require_once PATH_THIRD.'assets/helper.php';
-
-            $assets_helper = new Assets_helper;
-            $assets_helper->include_sheet_resources();
-            $assets_helper->include_js('matrix.js');
-        }
-        else {
-            ee()->load->library('file_field');
-
-            // Setup file_field
-            ee()->file_field->browser(array(
-                'publish' => true,
-                'settings' => json_encode(array(
-                    'content-type' => 'image',
-                    'directory' => 'all'
-                ))
-            ));
-        }
-
-        // Include assets
-        $this->_include_theme_js('jquery.tablednd.js', 'field.js');
-        $this->_include_theme_css('field.css');
-
         // Get saved data
         if (!empty($data)) {
             $vars = unserialize(base64_decode($data));
@@ -237,9 +213,14 @@ class Jw_nivo_ft extends EE_Fieldtype {
         $this->prep_prefs_table($vars, 'settings');
         $vars['settings_html'] = ee()->table->generate();
 
-        // Check for Assets
-        $vars['use_assets'] = $this->settings['use_assets'] === 'y';
-        if ($this->settings['use_assets'] === 'y') {
+        // Check if using Assets
+        if ($vars['use_assets'] = ($this->settings['use_assets'] === 'y')) {
+            require_once PATH_THIRD.'assets/helper.php';
+
+            $assets_helper = new Assets_helper;
+            $assets_helper->include_sheet_resources();
+            $assets_helper->include_js('matrix.js');
+
             ee()->load->add_package_path(PATH_THIRD.'assets/');
             $vars['assets_settings'] = array(
                 'filedirs' => 'all', // TODO: Limit file dirs for Assets fieldtype
@@ -247,6 +228,23 @@ class Jw_nivo_ft extends EE_Fieldtype {
                 'view'     => 'thumbs'
             );
         }
+        // Otherwise, native file field
+        else {
+            ee()->load->library('file_field');
+
+            // Setup file_field
+            ee()->file_field->browser(array(
+                'publish'  => true,
+                'settings' => json_encode(array(
+                    'content-type' => 'image',
+                    'directory'    => 'all'
+                ))
+            ));
+        }
+
+        // Include themes
+        $this->_include_theme_js('jquery.tablednd.js', 'field.js');
+        $this->_include_theme_css('field.css');
 
         return ee()->load->view('field', $vars, true);
     }
