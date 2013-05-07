@@ -2,10 +2,10 @@
 <table class="mainTable padTable js-nivo-table nivo-table" border="0" cellspacing="0" cellpadding="0" data-assets="<?= $use_assets ? 'true' : 'false' ?>">
     <thead>
         <th style="width:  3%"></th>
-        <th style="width: 13%"><em class="required">* </em><?= lang('image') ?></th>
-        <th style="width: 27%"><?= lang('caption') ?></th>
-        <th style="width: 27%"><?= lang('link') ?></th>
-        <th style="width: 27%"><?= lang('alt_text') ?></th>
+        <th style="min-width: 175px"><em class="required">* </em><?= lang('image') ?></th>
+        <th><?= lang('caption') ?></th>
+        <th><?= lang('link') ?></th>
+        <th><?= lang('alt_text') ?></th>
         <th style="width:  3%"></th>
     </thead>
     <tbody>
@@ -21,8 +21,6 @@
             <?php
                 $field             = new Assets_ft();
                 $field->settings   = array_merge($field->settings, $assets_settings);
-                $field->col_id     = 1;
-                $field->cell_name  = "slide_image_#";
                 $field->field_name = "slide_image_#";
                 echo $field->display_field(false);
             ?>
@@ -45,8 +43,6 @@
             <?php
                 $field             = new Assets_ft();
                 $field->settings   = array_merge($field->settings, $assets_settings);
-                $field->col_id     = 1;
-                $field->cell_name  = "slide_image_{$j}";
                 $field->field_name = "slide_image_{$j}";
                 echo $field->display_field(array($slide['image']));
             ?>

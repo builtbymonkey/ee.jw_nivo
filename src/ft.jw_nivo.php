@@ -122,7 +122,19 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
         // Prep images
         foreach ($data['slides'] as $i => $slide) {
-            $image = ee()->file_field->parse_field($data['slides'][$i]['image']);
+            if ($this->settings['use_assets'] === 'y') {
+                $row = ee()->db->where('file_id', $slide['image'])->get('assets_files')->row();
+                $source = ee()->assets_lib->instantiate_source_type($row);
+                $file = $source->get_file($slide['image']);
+                $image = array(
+                    'rel_path'      => $file->server_path(),
+                    'extension'     => $file->extension(),
+                    'modified_date' => $file->date_modified()
+                );
+            }
+            else {
+                $image = ee()->file_field->parse_field($slide['image']);
+            }
 
             // Do images need to be resized
             $data['slides'][$i]['image'] =
@@ -219,13 +231,11 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
             $assets_helper = new Assets_helper;
             $assets_helper->include_sheet_resources();
-            $assets_helper->include_js('matrix.js');
 
-            ee()->load->add_package_path(PATH_THIRD.'assets/');
             $vars['assets_settings'] = array(
-                'multiSelect' => false,
-                'filedirs'    => 'all',
-                'kinds'       => 'image'
+                'filedirs' => 'all',
+                'multi' => false,
+                'view' => 'thumbs'
             );
         }
         // Otherwise, native file field

@@ -9,15 +9,6 @@ $ ->
 
 
     #
-    # Instantiate Assets Fields
-    #
-    if use_assets
-        $('.js-nivo-slide').each (i) ->
-            $assets_field = $('.assets-field', $(this))
-            new Assets.Field($assets_field, $assets_field.attr('id'), Assets.Field.matrixConfs['col_id_1'])
-
-
-    #
     # Add Slide
     #
     $('.js-nivo-add-slide').on 'click', (e) ->
@@ -50,8 +41,12 @@ $ ->
         #  right elements to update.
         if use_assets
             $assets_field = $('.assets-field', $new_row)
-            $assets_field.attr 'id', 'slide_image_'+row_id
-            new Assets.Field($assets_field, $assets_field.attr('id'), Assets.Field.matrixConfs['col_id_1'])
+            field_id = 'slide_image_'+row_id
+            $assets_field.attr 'id', field_id
+            new Assets.Field field_id, field_id,
+                filedirs: 'all'
+                multi: false
+                view: 'thumbs'
         else
             file_field = "[name=slide_image_#{row_id}]"
             $file_field = $(file_field)
