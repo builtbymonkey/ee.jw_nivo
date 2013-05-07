@@ -223,9 +223,9 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
             ee()->load->add_package_path(PATH_THIRD.'assets/');
             $vars['assets_settings'] = array(
-                'filedirs' => 'all', // TODO: Limit file dirs for Assets fieldtype
-                'multi'    => 'n',
-                'view'     => 'thumbs'
+                'multiSelect' => false,
+                'filedirs'    => 'all',
+                'kinds'       => 'image'
             );
         }
         // Otherwise, native file field
