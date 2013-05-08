@@ -116,8 +116,6 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     public function pre_process($data)
     {
-        ee()->load->library('file_field');
-
         $data = unserialize(base64_decode($data));
 
         // Prep images
@@ -133,6 +131,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
                 );
             }
             else {
+                ee()->load->library('file_field');
                 $image = ee()->file_field->parse_field($slide['image']);
             }
 
