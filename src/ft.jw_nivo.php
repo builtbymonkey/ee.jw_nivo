@@ -125,6 +125,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
                 $source = ee()->assets_lib->instantiate_source_type($row);
                 $file = $source->get_file($slide['image']);
                 $image = array(
+                    'url'           => $file->url(),
                     'rel_path'      => $file->server_path(),
                     'extension'     => $file->extension(),
                     'modified_date' => $file->date_modified()
