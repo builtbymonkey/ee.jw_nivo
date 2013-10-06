@@ -9,7 +9,8 @@ require PATH_THIRD.'jw_nivo/config.php';
  * @author     Jeremy Worboys <jw@jeremyworboys.com>
  * @copyright  Copyright (c) 2012 Jeremy Worboys
  */
-class Jw_nivo_ft extends EE_Fieldtype {
+class Jw_nivo_ft extends EE_Fieldtype
+{
 
     /**
      * Fieldtype Info
@@ -66,7 +67,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
                                         'boxRainReverse', 'boxRainGrow',
                                         'boxRainGrowReverse');
 
-// ----------------------------------------------------------------------------- CONSTRUCTOR
+    // ------------------------------------------------------------------------- CONSTRUCTOR
 
 
     /**
@@ -99,7 +100,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     }
 
 
-// ----------------------------------------------------------------------------- TEMPLATE TAGS
+    // ------------------------------------------------------------------------- TEMPLATE TAGS
 
 
     /**
@@ -163,7 +164,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
      * @param  string The data between tag (for tag pairs)
      * @return string The text/HTML to replace the tag
      */
-    public function replace_tag($data, $params=array(), $tagdata=FALSE)
+    public function replace_tag($data, $params=array(), $tagdata=false)
     {
         // Only load core assets once per page
         $data['assets'] = array();
@@ -189,7 +190,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     }
 
 
-// ----------------------------------------------------------------------------- PUBLISH PAGE
+    // ------------------------------------------------------------------------- PUBLISH PAGE
 
 
     /**
@@ -330,7 +331,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     }
 
 
-// ----------------------------------------------------------------------------- INSTALLATION
+    // ------------------------------------------------------------------------- INSTALLATION
 
 
     /**
@@ -349,7 +350,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     }
 
 
-// ----------------------------------------------------------------------------- MODULE SETTINGS
+    // ------------------------------------------------------------------------- MODULE SETTINGS
 
 
     /**
@@ -379,7 +380,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
         );
         ee()->table->add_row(
             lang('cache_url'),
-            form_input('cache_url',  $this->settings['cache_url'])
+            form_input('cache_url', $this->settings['cache_url'])
         );
         ee()->table->add_row(
             lang('use_assets'),
@@ -435,7 +436,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     }
 
 
-// ----------------------------------------------------------------------------- PRIVATE METHODS
+    // ------------------------------------------------------------------------- PRIVATE METHODS
 
 
     /**
@@ -457,7 +458,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
 
             $config['source_image']     = $rel_path;
             $config['new_image']        = $cache_path;
-            $config['maintain_ratio']   = TRUE;
+            $config['maintain_ratio']   = true;
             $config['image_library']    = ee()->config->item('image_resize_protocol');
             $config['library_path']     = ee()->config->item('image_library_path');
             $config['width']            = $size['width'];
@@ -829,7 +830,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
     }
 
 
-// ----------------------------------------------------------------------------- ASSET LOADING
+    // ------------------------------------------------------------------------- ASSET LOADING
 
 
     /**
@@ -837,7 +838,7 @@ class Jw_nivo_ft extends EE_Fieldtype {
      */
     private function _theme_url()
     {
-        if ($this->cache['theme_url'] === null){
+        if ($this->cache['theme_url'] === null) {
             $theme_folder_url = defined('URL_THIRD_THEMES') ? URL_THIRD_THEMES : ee()->config->slash_item('theme_folder_url').'third_party/';
             $this->cache['theme_url'] = $theme_folder_url.'jw_nivo/';
         }
