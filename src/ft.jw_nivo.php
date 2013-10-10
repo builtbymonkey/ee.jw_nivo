@@ -7,7 +7,7 @@ require PATH_THIRD.'jw_nivo/config.php';
  *
  * @package    jw_nivo
  * @author     Jeremy Worboys <jw@jeremyworboys.com>
- * @copyright  Copyright (c) 2012 Jeremy Worboys
+ * @copyright  Copyright (c) 2013 Jeremy Worboys
  */
 class Jw_nivo_ft extends EE_Fieldtype
 {
