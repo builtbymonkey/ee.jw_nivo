@@ -9,6 +9,21 @@ $ ->
 
 
     #
+    # EE File Browser - Add Image
+    #
+    handleFilePicked = (file, field_name) ->
+        return unless file.is_image
+
+        $field = $("#{field_name}").closest(".file_field")
+
+        $field.find(".file_set").show()
+        $field.find(".choose_file").hide()
+        $field.find(".undo_remove").hide()
+        $field.find('[name*="_hidden_file"]').val(file.file_name)
+        $field.find('[name*="_hidden_dir"], [name*="_directory"]').val(file.upload_location_id)
+        $field.find(".filename").html("<img src=\"#{file.thumb}\"><br>#{file.file_name}")
+
+    #
     # Add Slide
     #
     $('.js-nivo-add-slide').on 'click', (e) ->
@@ -48,40 +63,40 @@ $ ->
                 multi: false
                 view: 'thumbs'
         else
-            file_field = "[name=slide_image_#{row_id}]"
-            $file_field = $(file_field)
-            $.ee_filebrowser.add_trigger $('.choose_file', $new_row), file_field, {
-                    content_type: $file_field.data 'content-type'
-                    directory:    $file_field.data 'directory'
-                },
-                # Callback for when an image is selected
-                (file, field) ->
-                    directory   = file.upload_location_id
-                    name        = file.file_name
-                    thumb       = file.thumb
-                    $thumb      = $('.file_set', $new_row)
-                    $field_dir  = $("[name=slide_image_#{row_id}_hidden_dir]")
-                    $field_file = $("[name=slide_image_#{row_id}_hidden], [name=slide_image_#{row_id}_hidden_file]").first()
+            field_name   = "[name=slide_image_#{row_id}]"
+            $file_field  = $(field_name).closest(".file_field")
+            $choose_file = $file_field.find(".choose_file")
+            $no_file     = $file_field.find(".no_file")
+            file_cache   = []
+            field_data   =
+                content_type: $file_field.data 'content-type'
+                directory:    $file_field.data 'directory'
 
-                    # Validation
-                    return if not (directory and name)
+            $.ee_filebrowser.add_trigger($choose_file, field_name, field_data, handleFilePicked)
 
-                    # Update the input values
-                    $field_dir.val(directory)
-                    $field_file.val(name)
+            $file_selector = if $choose_file.length then $choose_file else $no_file
 
-                    # Update 'remove image'
-                    $('.remove_file', $new_row).on 'click', (e) ->
-                        $thumb.addClass('js_hide')
-                        $field_dir.val('')
-                        $field_file.val('')
+            $file_field.find(".remove_file").click ->
+                $file_selector.show()
+                $file_field.find(".file_set").hide()
+                $file_field.find(".sub_filename a").show()
 
-                    # Load the new thumbnail
-                    $('.filename > img', $thumb).attr('src', thumb);
-                    $thumb.removeClass('js_hide')
+                $file_field.find("input[type=hidden]").val (i, value) ->
+                    file_cache[i] = value
+                    return ""
 
-        # Prevent default
-        false
+                false
+
+            $file_field.find(".undo_remove").click ->
+                $file_selector.hide()
+                $file_field.find(".file_set").show()
+                $file_field.find(".sub_filename a").hide()
+
+                $file_field.find("input[type=hidden]").val (i) ->
+                    return file_cache[i] or ""
+
+                false
+
 
 
     #
