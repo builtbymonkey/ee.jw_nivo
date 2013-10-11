@@ -494,7 +494,10 @@ class Jw_nivo_ft extends EE_Fieldtype
                 }
             }
             else {
-                $image_file     = ee()->input->post('slide_image_'.$i.'_hidden');
+                $image_file     = ee()->input->post('slide_image_'.$i.'_hidden_file');
+                if (!$image_file) {
+                    $image_file = ee()->input->post('slide_image_'.$i.'_hidden');
+                }
                 $image_dir      = ee()->input->post('slide_image_'.$i.'_hidden_dir');
                 $slide['image'] = ee()->file_field->format_data($image_file, $image_dir);
             }
