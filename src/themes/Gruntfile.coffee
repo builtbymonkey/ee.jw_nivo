@@ -37,9 +37,9 @@ module.exports = (grunt) ->
             assets:
                 files: [
                     expand: true
-                    cwd: 'lib'
-                    src: ['nivo-slider']
-                    dest: 'public/'
+                    cwd: 'lib/nivo-slider'
+                    src: ['**']
+                    dest: 'public/nivo-slider/'
                 ]
 
         coffee:

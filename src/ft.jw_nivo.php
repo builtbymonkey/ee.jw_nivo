@@ -254,8 +254,8 @@ class Jw_nivo_ft extends EE_Fieldtype
         }
 
         // Include themes
-        $this->_include_theme_js('jquery.tablednd.js', 'field.js');
-        $this->_include_theme_css('field.css');
+        $this->_include_theme_js('jquery.tablednd.js', 'jw_nivo.js');
+        $this->_include_theme_css('jw_nivo.css');
 
         return ee()->load->view('field', $vars, true);
     }
@@ -852,7 +852,7 @@ class Jw_nivo_ft extends EE_Fieldtype
     private function _include_theme_css()
     {
         foreach (func_get_args() as $file) {
-            ee()->cp->add_to_head('<link rel="stylesheet" href="'.$this->_theme_url().'css/'.$file.'?'.JW_NIVO_VERSION.'">');
+            ee()->cp->add_to_head('<link rel="stylesheet" href="'.$this->_theme_url().$file.'?'.JW_NIVO_VERSION.'">');
         }
     }
 
@@ -862,7 +862,7 @@ class Jw_nivo_ft extends EE_Fieldtype
     private function _include_theme_js()
     {
         foreach (func_get_args() as $file) {
-            ee()->cp->add_to_foot('<script src="'.$this->_theme_url().'js/'.$file.'?'.JW_NIVO_VERSION.'"></script>');
+            ee()->cp->add_to_foot('<script src="'.$this->_theme_url().$file.'?'.JW_NIVO_VERSION.'"></script>');
         }
     }
 
