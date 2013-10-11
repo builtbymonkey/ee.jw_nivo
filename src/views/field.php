@@ -1,21 +1,3 @@
-<?
-
-function imageField($use_assets, $id = '#', $value = false)
-{
-     if ($use_assets) {
-         $field             = new Assets_ft();
-         $field->settings   = array_merge($field->settings, $assets_settings);
-         $field->field_name = "slide_image_{$id}";
-         return $field->display_field($value);
-    }
-    else {
-         return ee()->file_field->field("slide_image_{$id}", $value, 'all', 'image');
-    }
-}
-
-?>
-
-
 <table class="mainTable padTable js-nivo-table nivo-table" border="0" cellspacing="0" cellpadding="0" data-assets="<?=$use_assets ? 'true' : 'false'?>">
     <thead>
         <th style="width:  3%"></th>
@@ -36,7 +18,7 @@ function imageField($use_assets, $id = '#', $value = false)
         <?/* TEMPLATE */?>
         <tr class="js-nivo-slide-template is-hidden">
             <td class="js-reorder-handle nivo-handle nivo-icon-cell">&#9776;</td>
-            <td><?=imageField($use_assets)?></td>
+            <td><?=image_field($use_assets)?></td>
             <td><?=form_textarea("slide_caption_#")?></td>
             <td><?=form_textarea("slide_link_#")?></td>
             <td><?=form_textarea("slide_alt_text_#")?></td>
@@ -50,7 +32,7 @@ function imageField($use_assets, $id = '#', $value = false)
         <?$j = $i + 1?>
         <tr class="js-nivo-slide">
             <td class="js-reorder-handle nivo-handle nivo-icon-cell">&#9776;</td>
-            <td><?=imageField($use_assets, $j, $slide['image'])?></td>
+            <td><?=image_field($use_assets, $j, $slide['image'])?></td>
             <td><?=form_textarea("slide_caption_{$j}",          $slide['caption'])?></td>
             <td><?=form_textarea("slide_link_{$j}",             $slide['link'])?></td>
             <td><?=form_textarea("slide_alt_text_{$j}",         $slide['alt_text'])?></td>

@@ -204,6 +204,7 @@ class Jw_nivo_ft extends EE_Fieldtype
     public function display_field($data)
     {
         // Load libraries
+        ee()->load->helper('jw_nivo');
         ee()->load->library('table');
 
         // Get saved data
