@@ -7,12 +7,13 @@
     $sizing       = ($settings['sizing'] === 'fixed') ? "style=\"width:{$settings['size']['width']}px; height:{$settings['size']['height']}px\"" : '';
 
 ?>
-<? if ($slides): ?>
+<?if ($slides):?>
 
-    <div class="slider-wrapper <?= $theme_class ?> <?= $thumbs_class ?>">
+    <div class="slider-wrapper <?=$theme_class?> <?=$thumbs_class?>">
         <div class="ribbon"></div>
-        <div id="nivoslider-<?= $entry_id ?>"<? if (count($slides) > 1): ?> class="nivoSlider" <? endif; ?><?= $sizing ?>>
-<?   foreach ($slides as $j => $slide) {
+        <div id="nivoslider-<?=$entry_id?>"<?if (count($slides) > 1):?> class="nivoSlider" <?endif;?><?=$sizing?>>
+        <?
+        foreach ($slides as $j => $slide) {
             extract($slide);
 
             $style    = ($j > 0) ? 'style="display:none"' : '';
@@ -25,7 +26,8 @@
             if ($caption) $captions[] = $caption;
 
             echo $img;
-        } ?>
+        }
+        ?>
         </div>
     </div>
 
@@ -37,31 +39,31 @@
         }
     ?>
 
-<? endif ?>
+<?endif?>
 
-<? foreach ($assets as $asset) { echo $asset."\n"; } ?>
+<?foreach ($assets as $asset) { echo $asset."\n"; }?>
 <script type="text/javascript">
-<? if (count($slides) > 1): ?>
+<?if (count($slides) > 1):?>
     $(function(){
-        jQuery("#nivoslider-<?= $entry_id ?>").nivoSlider({
-            effect:           "<?= $settings['transition'] ?>",
-            slices:           <?= $settings['slices'] ?>,
-            boxCols:          <?= $settings['box']['cols'] ?>,
-            boxRows:          <?= $settings['box']['rows'] ?>,
-            animSpeed:        <?= $settings['speed'] ?>,
-            pauseTime:        <?= $settings['pause'] ?>,
-            directionNav:     <?= ($settings['direction_nav']  === 'y') ? 'true' : 'false' ?>,
-            controlNav:       <?= ($settings['control_nav']    === 'y') ? 'true' : 'false' ?>,
-            controlNavThumbs: <?= ($settings['thumbnail_nav']  === 'y') ? 'true' : 'false' ?>,
-            pauseOnHover:     <?= ($settings['pause_on_hover'] === 'y') ? 'true' : 'false' ?>,
-            manualAdvance:    <?= ($settings['manual']         === 'y') ? 'true' : 'false' ?>,
-            startSlide:       <?= ($settings['random_start']   === 'y') ? floor(rand(0, count($slides))) : '0' //$settings['start'] ?>
+        jQuery("#nivoslider-<?=$entry_id?>").nivoSlider({
+            effect:           "<?=$settings['transition']?>",
+            slices:           <?=$settings['slices']?>,
+            boxCols:          <?=$settings['box']['cols']?>,
+            boxRows:          <?=$settings['box']['rows']?>,
+            animSpeed:        <?=$settings['speed']?>,
+            pauseTime:        <?=$settings['pause']?>,
+            directionNav:     <?=($settings['direction_nav']  === 'y') ? 'true' : 'false'?>,
+            controlNav:       <?=($settings['control_nav']    === 'y') ? 'true' : 'false'?>,
+            controlNavThumbs: <?=($settings['thumbnail_nav']  === 'y') ? 'true' : 'false'?>,
+            pauseOnHover:     <?=($settings['pause_on_hover'] === 'y') ? 'true' : 'false'?>,
+            manualAdvance:    <?=($settings['manual']         === 'y') ? 'true' : 'false'?>,
+            startSlide:       <?=($settings['random_start']   === 'y') ? floor(rand(0, count($slides))) : '0' //$settings['start']?>
 
         });
     });
-<? else: ?>
+<?else:?>
     jQuery(window).load(function(){
-        jQuery("#nivoslider-<?= $entry_id ?> img").show();
+        jQuery("#nivoslider-<?=$entry_id?> img").show();
     });
-<? endif ?>
+<?endif?>
 </script>
