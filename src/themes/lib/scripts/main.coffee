@@ -64,13 +64,14 @@ $ ->
                 view: 'thumbs'
         else
             field_name   = "[name=slide_image_#{row_id}]"
-            $file_field  = $(field_name).closest(".file_field")
+            $file_input  = $(field_name)
+            $file_field  = $file_input.closest(".file_field")
             $choose_file = $file_field.find(".choose_file")
             $no_file     = $file_field.find(".no_file")
             file_cache   = []
             field_data   =
-                content_type: $file_field.data 'content-type'
-                directory:    $file_field.data 'directory'
+                content_type: $file_input.data 'content-type'
+                directory:    $file_input.data 'directory'
 
             $.ee_filebrowser.add_trigger($choose_file, field_name, field_data, handleFilePicked)
 
