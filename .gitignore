@@ -3,3 +3,5 @@
 /build
 *.zip
 .DS_Store
+node_modules
+src/themes/public

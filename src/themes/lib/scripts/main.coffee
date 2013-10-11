@@ -61,7 +61,7 @@ $ ->
                     thumb       = file.thumb
                     $thumb      = $('.file_set', $new_row)
                     $field_dir  = $("[name=slide_image_#{row_id}_hidden_dir]")
-                    $field_file = $("[name=slide_image_#{row_id}_hidden]")
+                    $field_file = $("[name=slide_image_#{row_id}_hidden], [name=slide_image_#{row_id}_hidden_file]").first()
 
                     # Validation
                     return if not (directory and name)
@@ -77,7 +77,7 @@ $ ->
                         $field_file.val('')
 
                     # Load the new thumbnail
-                    $('img', $thumb).attr('src', thumb);
+                    $('.filename > img', $thumb).attr('src', thumb);
                     $thumb.removeClass('js_hide')
 
         # Prevent default
