@@ -1,3 +1,20 @@
+<?
+
+function imageField($id = '#', $value = false)
+{
+     if ($use_assets) {
+         $field             = new Assets_ft();
+         $field->settings   = array_merge($field->settings, $assets_settings);
+         $field->field_name = "slide_image_{$id}";
+         return  $field->display_field($value);
+    }
+    else {
+         return $this->file_field->field("slide_image_{$id}", $value, 'all', 'image')
+    }
+}
+
+?>
+
 
 <table class="mainTable padTable js-nivo-table nivo-table" border="0" cellspacing="0" cellpadding="0" data-assets="<?=$use_assets ? 'true' : 'false'?>">
     <thead>
@@ -9,48 +26,31 @@
         <th style="width:  3%"></th>
     </thead>
     <tbody>
+        <?/* NO SLIDES */?>
         <tr class="js-nivo-no-slides <?=(isset($slides) && count($slides) > 0) ? 'is-hidden' : ''?>">
             <td colspan="6">
                 <em><?=lang('no_slides')?></em>
             </td>
         </tr>
+
+        <?/* TEMPLATE */?>
         <tr class="js-nivo-slide-template is-hidden">
             <td class="js-reorder-handle nivo-handle nivo-icon-cell">&#9776;</td>
-            <td>
-            <?if ($use_assets):?>
-            <?
-                $field             = new Assets_ft();
-                $field->settings   = array_merge($field->settings, $assets_settings);
-                $field->field_name = "slide_image_#";
-                echo $field->display_field(false);
-           ?>
-            <?else:?>
-                <?=$this->file_field->field("slide_image_#", '', 'all', 'image')?>
-            <?endif?>
-            </td>
+            <td><?=imageField()?></td>
             <td><?=form_textarea("slide_caption_#")?></td>
             <td><?=form_textarea("slide_link_#")?></td>
             <td><?=form_textarea("slide_alt_text_#")?></td>
             <td class="nivo-icon-cell"><a href="#" class="js-nivo-remove-slide nivo-button nivo-button-minus">&minus;</a></td>
         </tr>
+
+        <?/* SAVED SLIDES */?>
         <?$j = 0?>
         <?if (isset($slides)):?>
         <?foreach ($slides as $i => $slide):?>
         <?$j = $i + 1?>
         <tr class="js-nivo-slide">
             <td class="js-reorder-handle nivo-handle nivo-icon-cell">&#9776;</td>
-            <td>
-            <?if ($use_assets):?>
-            <?
-                $field             = new Assets_ft();
-                $field->settings   = array_merge($field->settings, $assets_settings);
-                $field->field_name = "slide_image_{$j}";
-                echo $field->display_field(array($slide['image']));
-           ?>
-            <?else:?>
-                <?=$this->file_field->field("slide_image_{$j}", $slide['image'], 'all', 'image')?>
-            <?endif?>
-            </td>
+            <td><?=imageField($j, array($slide['image']))?></td>
             <td><?=form_textarea("slide_caption_{$j}",          $slide['caption'])?></td>
             <td><?=form_textarea("slide_link_{$j}",             $slide['link'])?></td>
             <td><?=form_textarea("slide_alt_text_{$j}",         $slide['alt_text'])?></td>
@@ -58,6 +58,7 @@
         </tr>
         <?endforeach?>
         <?endif?>
+
     </tbody>
 </table>
 <input type="hidden" name="slide_count" value="<?=$j?>">
