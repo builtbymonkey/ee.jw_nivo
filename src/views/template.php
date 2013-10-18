@@ -1,4 +1,4 @@
-<?
+<?php
 
     $i            = 0;
     $captions     = array();
@@ -7,12 +7,13 @@
     $sizing       = ($settings['sizing'] === 'fixed') ? "style=\"width:{$settings['size']['width']}px; height:{$settings['size']['height']}px\"" : '';
 
 ?>
-<?if ($slides):?>
+<?php if ($slides): ?>
 
     <div class="slider-wrapper <?=$theme_class?> <?=$thumbs_class?>">
         <div class="ribbon"></div>
-        <div id="nivoslider-<?=$entry_id?>"<?if (count($slides) > 1):?> class="nivoSlider" <?endif;?><?=$sizing?>>
-        <?
+        <div id="nivoslider-<?=$entry_id?>"<?php if (count($slides) > 1): ?> class="nivoSlider" <?php endif ?><?=$sizing?>>
+        <?php
+
         foreach ($slides as $j => $slide) {
             extract($slide);
 
@@ -27,11 +28,12 @@
 
             echo $img;
         }
+
         ?>
         </div>
     </div>
 
-    <?
+    <?php
         $i = 0;
         foreach ($captions as $caption) {
             echo "<div id=\"nivoslider-{$entry_id}-caption-{$i}\" class=\"nivo-html-caption\">{$caption}</div>\n";
@@ -39,11 +41,11 @@
         }
     ?>
 
-<?endif?>
+<?php endif ?>
 
-<?foreach ($assets as $asset) { echo $asset."\n"; }?>
+<?php foreach ($assets as $asset) { echo $asset."\n"; } ?>
 <script type="text/javascript">
-<?if (count($slides) > 1):?>
+<?php if (count($slides) > 1): ?>
     $(function(){
         jQuery("#nivoslider-<?=$entry_id?>").nivoSlider({
             effect:           "<?=$settings['transition']?>",
@@ -61,9 +63,9 @@
 
         });
     });
-<?else:?>
+<?php else: ?>
     jQuery(window).load(function(){
         jQuery("#nivoslider-<?=$entry_id?> img").show();
     });
-<?endif?>
+<?php endif ?>
 </script>

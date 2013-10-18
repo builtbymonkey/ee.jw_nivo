@@ -8,14 +8,14 @@
         <th style="width:  3%"></th>
     </thead>
     <tbody>
-        <?/* NO SLIDES */?>
+        <?php /* NO SLIDES */ ?>
         <tr class="js-nivo-no-slides <?=(isset($slides) && count($slides) > 0) ? 'is-hidden' : ''?>">
             <td colspan="6">
                 <em><?=lang('no_slides')?></em>
             </td>
         </tr>
 
-        <?/* TEMPLATE */?>
+        <?php /* TEMPLATE */ ?>
         <tr class="js-nivo-slide-template is-hidden">
             <td class="js-reorder-handle nivo-handle nivo-icon-cell">&#9776;</td>
             <td><?=image_field($use_assets)?></td>
@@ -25,11 +25,11 @@
             <td class="nivo-icon-cell"><a href="#" class="js-nivo-remove-slide nivo-button nivo-button-minus">&minus;</a></td>
         </tr>
 
-        <?/* SAVED SLIDES */?>
-        <?$j = 0?>
-        <?if (isset($slides)):?>
-        <?foreach ($slides as $i => $slide):?>
-        <?$j = $i + 1?>
+        <?php /* SAVED SLIDES */ ?>
+        <?php $j = 0 ?>
+        <?php if (isset($slides)): ?>
+        <?php foreach ($slides as $i => $slide): ?>
+        <?php $j = $i + 1 ?>
         <tr class="js-nivo-slide">
             <td class="js-reorder-handle nivo-handle nivo-icon-cell">&#9776;</td>
             <td><?=image_field($use_assets, $j, $slide['image'])?></td>
@@ -38,8 +38,8 @@
             <td><?=form_textarea("slide_alt_text_{$j}",         $slide['alt_text'])?></td>
             <td class="nivo-icon-cell"><a href="#" class="js-nivo-remove-slide nivo-button nivo-button-minus">&minus;</a></td>
         </tr>
-        <?endforeach?>
-        <?endif?>
+        <?php endforeach ?>
+        <?php endif ?>
 
     </tbody>
 </table>
