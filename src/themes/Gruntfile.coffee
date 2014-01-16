@@ -41,6 +41,13 @@ module.exports = (grunt) ->
                     src: ['**']
                     dest: 'public/nivo-slider/'
                 ]
+            jquery:
+                files: [
+                    expand: true
+                    cwd: 'lib/scripts'
+                    src: ['jquery-*.js']
+                    dest: 'public/'
+                ]
 
         coffee:
             options:
