@@ -18,7 +18,7 @@
         <?php /* TEMPLATE */ ?>
         <tr class="js-nivo-slide-template is-hidden">
             <td class="js-reorder-handle nivo-handle nivo-icon-cell">&#9776;</td>
-            <td><?=image_field($use_assets)?></td>
+            <td><?=image_field($assets_settings)?></td>
             <td><?=form_textarea("slide_caption_#")?></td>
             <td><?=form_textarea("slide_link_#")?></td>
             <td><?=form_textarea("slide_alt_text_#")?></td>
@@ -32,7 +32,7 @@
         <?php $j = $i + 1 ?>
         <tr class="js-nivo-slide">
             <td class="js-reorder-handle nivo-handle nivo-icon-cell">&#9776;</td>
-            <td><?=image_field($use_assets, $j, $slide['image'])?></td>
+            <td><?=image_field($assets_settings, $j, $slide['image'])?></td>
             <td><?=form_textarea("slide_caption_{$j}",          $slide['caption'])?></td>
             <td><?=form_textarea("slide_link_{$j}",             $slide['link'])?></td>
             <td><?=form_textarea("slide_alt_text_{$j}",         $slide['alt_text'])?></td>

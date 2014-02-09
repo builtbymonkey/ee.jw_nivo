@@ -14,9 +14,9 @@
  * @param  boolean $value
  * @return string
  */
-function image_field($use_assets, $id = '#', $value = false)
+function image_field($assets_settings, $id = '#', $value = false)
 {
-    if ($use_assets) {
+    if (!empty($assets_settings)) {
         $field             = new Assets_ft();
         $field->settings   = array_merge($field->settings, $assets_settings);
         $field->field_name = "slide_image_{$id}";

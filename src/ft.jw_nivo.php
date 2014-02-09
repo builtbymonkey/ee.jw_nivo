@@ -227,6 +227,9 @@ class Jw_nivo_ft extends EE_Fieldtype
         $this->prep_prefs_table($vars, 'settings');
         $vars['settings_html'] = ee()->table->generate();
 
+        // Default value
+        $vars['assets_settings'] = null;
+
         // Check if using Assets
         if ($vars['use_assets'] = ($this->settings['use_assets'] === 'y')) {
             require_once PATH_THIRD.'assets/helper.php';
