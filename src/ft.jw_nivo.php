@@ -450,15 +450,15 @@ class Jw_nivo_ft extends EE_Fieldtype
      */
     private function resize_image($image, $size)
     {
-        extract($image);
-
-        $cache_name = md5($rel_path . $size['width'] . $size['height'] . $modified_date) . '.' . $extension;
+        $cache_name = md5(
+                $image['rel_path'] . $size['width'] . $size['height'] . $image['modified_date']
+            ) . '.' . $image['extension'];
         $cache_path = $this->settings['cache_path'] . $cache_name;
 
         if (!file_exists($cache_path)) {
             ee()->load->library('image_lib');
 
-            $config['source_image'] = $rel_path;
+            $config['source_image'] = $image['rel_path'];
             $config['new_image'] = $cache_path;
             $config['maintain_ratio'] = true;
             $config['image_library'] = ee()->config->item('image_resize_protocol');
