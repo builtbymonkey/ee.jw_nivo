@@ -24,7 +24,7 @@ function image_field($assets_settings, $id = '#', $value = false)
         $field->settings = array_merge($field->settings, $assets_settings);
         $field->field_name = "slide_image_{$id}";
 
-        return $field->display_field($value);
+        return $field->display_field(array($value));
     } else {
         return ee()->file_field->field("slide_image_{$id}", $value, 'all', 'image');
     }
