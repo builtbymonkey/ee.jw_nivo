@@ -1,6 +1,5 @@
 $ ->
 
-    $nivo_field  = $('.js-nivo-table').closest('.holder')
     $nivo_table  = $('.js-nivo-table tbody')
     $nivo_templ  = $('.js-nivo-slide-template')
     $nivo_empty  = $('.js-nivo-no-slides')
