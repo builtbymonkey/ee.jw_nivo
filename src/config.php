@@ -2,7 +2,7 @@
 
 if (!defined('JW_NIVO_VERSION')) {
     define('JW_NIVO_NAME', 'JW Nivo');
-    define('JW_NIVO_VERSION', '1.3.5');
+    define('JW_NIVO_VERSION', '1.3.6');
 }
 
 $config['name'] = JW_NIVO_NAME;
