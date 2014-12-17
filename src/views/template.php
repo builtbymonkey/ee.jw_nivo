@@ -55,7 +55,7 @@ $sizing = ($settings['sizing'] === 'fixed') ? "style=\"width:{$settings['size'][
 } ?>
 <script type="text/javascript">
     <?php if (count($slides) > 1): ?>
-    $(function () {
+    jQuery(function () {
         jQuery("#nivoslider-<?=$entry_id?>").nivoSlider({
             effect: "<?=$settings['transition']?>",
             slices:           <?=$settings['slices']?>,
@@ -73,8 +73,12 @@ $sizing = ($settings['sizing'] === 'fixed') ? "style=\"width:{$settings['size'][
         });
     });
     <?php else: ?>
-    jQuery(window).load(function () {
-        jQuery("#nivoslider-<?=$entry_id?> img").show();
+    jQuery(function () {
+        var img = jQuery("#nivoslider-<?=$entry_id?> img");
+        <?php if ($settings['sizing'] !== 'fixed'): ?>
+            img.css({height: 'auto', maxWidth: '100%'});
+        <?php endif ?>
+        img.show();
     });
     <?php endif ?>
 </script>

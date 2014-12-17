@@ -421,7 +421,7 @@ class Jw_nivo_ft extends EE_Fieldtype
      */
     public function display_settings($data)
     {
-        $this->_include_theme_js('field.js');
+        $this->_include_theme_js('jw_nivo.js');
 
         $this->prep_prefs_table(array('nivo_settings' => $data), 'nivo_settings');
 
