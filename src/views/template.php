@@ -55,7 +55,7 @@ $sizing = ($settings['sizing'] === 'fixed') ? "style=\"width:{$settings['size'][
 } ?>
 <script type="text/javascript">
     <?php if (count($slides) > 1): ?>
-    $(function () {
+    jQuery(function () {
         jQuery("#nivoslider-<?=$entry_id?>").nivoSlider({
             effect: "<?=$settings['transition']?>",
             slices:           <?=$settings['slices']?>,
